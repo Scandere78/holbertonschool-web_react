@@ -39,4 +39,8 @@ module.exports = {
   performance: {
     hints: false,
   },
+  devServer: {
+    contentBase: './public',
+    port: 8564,
+  },
 };
