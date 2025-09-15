@@ -1,5 +1,4 @@
 const path = require('path');
-const HtmlWebpackPlugin = require('html-webpack-plugin');
 
 module.exports = {
   mode: 'production',
@@ -11,23 +10,12 @@ module.exports = {
   },
   module: {
     rules: [
-      // JS → Babel
-      {
-        test: /\.js$/i,
-        exclude: /node_modules/,
-        use: {
-          loader: 'babel-loader',
-          options: {
-            presets: ['@babel/preset-env'],
-          },
-        },
-      },
       // CSS → style-loader + css-loader
       {
         test: /\.css$/i,
         use: ['style-loader', 'css-loader'],
       },
-      // Images → file-loader + image-webpack-loader
+      // Images → image-webpack-loader
       {
         test: /\.(png|jpg|jpeg|gif)$/i,
         type: 'asset/resource',
@@ -48,11 +36,6 @@ module.exports = {
       },
     ],
   },
-  plugins: [
-    new HtmlWebpackPlugin({
-      template: './public/index.html',
-    }),
-  ],
   performance: {
     hints: false,
   },
