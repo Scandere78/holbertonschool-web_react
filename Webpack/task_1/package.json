@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "build": "webpack ./js/dashboard_main.js --mode production --output-path ./public --output-filename bundle.js"
+    "build": "webpack"
   },
   "keywords": [],
   "author": "",
