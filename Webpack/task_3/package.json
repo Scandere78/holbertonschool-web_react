@@ -4,8 +4,8 @@
   "description": "Task 3 - Webpack modules with dev server",
   "main": "index.js",
   "scripts": {
-    "start-dev": "webpack serve --config webpack.config.js",
-    "build": "webpack --config webpack.config.js"
+     "start-dev": "webpack-dev-server --open",
+  "build": "webpack --config webpack.config.js"
   },
   "keywords": [],
   "author": "Your Name",
