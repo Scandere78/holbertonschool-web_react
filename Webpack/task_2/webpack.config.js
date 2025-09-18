@@ -1,43 +1,46 @@
-const path = require("path");
-const HtmlWebpackPlugin = require("html-webpack-plugin");
-const { CleanWebpackPlugin } = require("clean-webpack-plugin");
+const path = require('path');
 
 module.exports = {
-  mode: "development",
-  entry: {
-    header: "./modules/header/header.js",
-    body: "./modules/body/body.js",
-    footer: "./modules/footer/footer.js"
-  },
-  devtool: "inline-source-map",
+  mode: 'production',
+  entry: './js/dashboard_main.js',
   output: {
-    path: path.resolve(__dirname, "public"),
-    filename: "[name].bundle.js"
+    filename: 'bundle.js',
+    path: path.resolve(__dirname, 'public'),
+    clean: true,
   },
   module: {
     rules: [
-      { test: /\.css$/i, use: ["style-loader", "css-loader"] },
+      // CSS → style-loader + css-loader
       {
-        test: /\.(png|jpe?g|gif|svg)$/i,
-        type: "javascript/auto",
+        test: /\.css$/i,
+        use: ['style-loader', 'css-loader'],
+      },
+      // Images → image-webpack-loader
+      {
+        test: /\.(png|jpg|jpeg|gif)$/i,
+        type: 'asset/resource',
+        generator: {
+          filename: 'images/[name][ext]',
+        },
         use: [
-          { loader: "file-loader", options: { name: "[name].[ext]", outputPath: "assets/" } },
-          { loader: "image-webpack-loader", options: { disable: true } } // plus rapide en dev
-        ]
-      }
-    ]
+          {
+            loader: 'image-webpack-loader',
+            options: {
+              mozjpeg: { progressive: true, quality: 75 },
+              optipng: { enabled: true },
+              pngquant: { quality: [0.65, 0.9], speed: 4 },
+              gifsicle: { interlaced: false },
+            },
+          },
+        ],
+      },
+    ],
   },
-  plugins: [
-    new CleanWebpackPlugin(),
-    new HtmlWebpackPlugin({
-      filename: "index.html",
-      chunks: ["vendors", "header", "body", "footer"]
-    })
-  ],
-  optimization: { splitChunks: { chunks: "all" } },
+  performance: {
+    hints: false,
+  },
   devServer: {
-    contentBase: "./public",  // le checker veut exactement cette clé/valeur
+    contentBase: './public',
     port: 8564,
-    open: true
-  }
+  },
 };
