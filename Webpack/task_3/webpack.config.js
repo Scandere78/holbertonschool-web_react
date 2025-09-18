@@ -36,10 +36,5 @@ module.exports = {
     new HtmlWebpackPlugin({
       title: 'Holberton Dashboard'
     })
-  ],
-  optimization: {
-    splitChunks: {
-      chunks: 'all'
-    }
-  }
+  ]
 };
