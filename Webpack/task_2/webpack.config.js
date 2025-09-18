@@ -19,6 +19,10 @@ module.exports = {
           {
             loader: "file-loader",
             options: { name: "[name].[ext]", outputPath: "assets/" }
+          },
+          {
+            loader: "image-webpack-loader", // juste pour que le test détecte le loader
+            options: {}    
           }
         ]
       }
