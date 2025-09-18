@@ -1,5 +1,4 @@
 const path = require('path');
-const HtmlWebpackPlugin = require('html-webpack-plugin');
 
 module.exports = {
   mode: "production",
@@ -17,14 +16,14 @@ module.exports = {
       },
       {
         test: /\.(png|jpe?g|gif)$/i,
-        type: "asset/resource",
-        generator: {
-          filename: "assets/[name][ext]"
-        }
-      },
-      {
-        test: /\.(png|jpe?g|gif)$/i,
         use: [
+          {
+            loader: "file-loader",
+            options: {
+              name: "[name].[ext]",
+              outputPath: "assets/"
+            }
+          },
           {
             loader: "image-webpack-loader",
             options: {
@@ -38,13 +37,11 @@ module.exports = {
       }
     ]
   },
-  plugins: [
-    new HtmlWebpackPlugin({
-      template: "./public/index.html",
-      inject: "body"
-    })
-  ],
   performance: {
     hints: false
+  },
+  // 🔑 Ajout clé pour ton problème
+  experiments: {
+    topLevelAwait: true
   }
 };

@@ -1,6 +1,7 @@
-import $ from 'jquery';
-import _ from 'lodash';
-import '../css/main.css';   // Import du CSS pour que Webpack l’intègre
+const $ = require('jquery');
+const _ = require('lodash');
+require('../css/main.css');
+
 
 let count = 0;
 
