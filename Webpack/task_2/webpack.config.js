@@ -1,4 +1,5 @@
 const path = require('path');
+const CopyPlugin = require("copy-webpack-plugin");
 
 module.exports = {
   mode: "production",
@@ -6,7 +7,6 @@ module.exports = {
   output: {
     filename: "bundle.js",
     path: path.resolve(__dirname, "public"),
-    clean: true
   },
   module: {
     rules: [
@@ -37,10 +37,16 @@ module.exports = {
       }
     ]
   },
+  plugins: [
+    new CopyPlugin({
+      patterns: [
+        { from: "public/index.html", to: "" }
+      ]
+    })
+  ],
   performance: {
     hints: false
   },
-  // 🔑 Ajout clé pour ton problème
   experiments: {
     topLevelAwait: true
   }
