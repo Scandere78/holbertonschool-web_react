@@ -1,46 +1,50 @@
 const path = require('path');
+const HtmlWebpackPlugin = require('html-webpack-plugin');
 
 module.exports = {
-  mode: 'production',
-  entry: './js/dashboard_main.js',
+  mode: "production",
+  entry: "./js/dashboard_main.js",
   output: {
-    filename: 'bundle.js',
-    path: path.resolve(__dirname, 'public'),
-    clean: true,
+    filename: "bundle.js",
+    path: path.resolve(__dirname, "public"),
+    clean: true
   },
   module: {
     rules: [
-      // CSS → style-loader + css-loader
       {
         test: /\.css$/i,
-        use: ['style-loader', 'css-loader'],
+        use: ["style-loader", "css-loader"]
       },
-      // Images → image-webpack-loader
       {
-        test: /\.(png|jpg|jpeg|gif)$/i,
-        type: 'asset/resource',
+        test: /\.(png|jpe?g|gif)$/i,
+        type: "asset/resource",
         generator: {
-          filename: 'images/[name][ext]',
-        },
+          filename: "assets/[name][ext]"
+        }
+      },
+      {
+        test: /\.(png|jpe?g|gif)$/i,
         use: [
           {
-            loader: 'image-webpack-loader',
+            loader: "image-webpack-loader",
             options: {
-              mozjpeg: { progressive: true, quality: 75 },
+              mozjpeg: { progressive: true },
               optipng: { enabled: true },
-              pngquant: { quality: [0.65, 0.9], speed: 4 },
-              gifsicle: { interlaced: false },
-            },
-          },
-        ],
-      },
-    ],
+              pngquant: { quality: [0.65, 0.90], speed: 4 },
+              gifsicle: { interlaced: false }
+            }
+          }
+        ]
+      }
+    ]
   },
+  plugins: [
+    new HtmlWebpackPlugin({
+      template: "./public/index.html",
+      inject: "body"
+    })
+  ],
   performance: {
-    hints: false,
-  },
-  devServer: {
-    contentBase: './public',
-    port: 8564,
-  },
+    hints: false
+  }
 };
