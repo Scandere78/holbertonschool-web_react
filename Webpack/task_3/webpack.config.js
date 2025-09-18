@@ -38,17 +38,5 @@ module.exports = {
     new HtmlWebpackPlugin({
       title: 'Holberton Dashboard'
     })
-  ],
-  optimization: {
-    splitChunks: {
-      chunks: 'all',
-      cacheGroups: {
-        vendor: {
-          test: /[\\/]node_modules[\\/]/,
-          name: 'vendors',
-          chunks: 'all',
-        }
-      }
-    }
-  }
+  ]
 };
