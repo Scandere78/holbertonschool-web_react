@@ -27,7 +27,7 @@ module.exports = {
   },
   devtool: 'inline-source-map',
   devServer: {
-    contentBase: './public',
+    contentBase: path.resolve(__dirname, 'public'),
     port: 8564,
     open: true
   },
@@ -36,5 +36,10 @@ module.exports = {
     new HtmlWebpackPlugin({
       title: 'Holberton Dashboard'
     })
-  ]
+  ],
+  optimization: {
+    splitChunks: {
+      chunks: 'all'
+    }
+  }
 };
