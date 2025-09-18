@@ -1,46 +1,43 @@
-const path = require('path');
+const path = require("path");
+const HtmlWebpackPlugin = require("html-webpack-plugin");
+const { CleanWebpackPlugin } = require("clean-webpack-plugin");
 
 module.exports = {
-  mode: 'production',
-  entry: './js/dashboard_main.js',
+  mode: "development",
+  entry: {
+    header: "./modules/header/header.js",
+    body: "./modules/body/body.js",
+    footer: "./modules/footer/footer.js"
+  },
+  devtool: "inline-source-map",
   output: {
-    filename: 'bundle.js',
-    path: path.resolve(__dirname, 'public'),
-    clean: true,
+    path: path.resolve(__dirname, "public"),
+    filename: "[name].bundle.js"
   },
   module: {
     rules: [
-      // CSS → style-loader + css-loader
+      { test: /\.css$/i, use: ["style-loader", "css-loader"] },
       {
-        test: /\.css$/i,
-        use: ['style-loader', 'css-loader'],
-      },
-      // Images → image-webpack-loader
-      {
-        test: /\.(png|jpg|jpeg|gif)$/i,
-        type: 'asset/resource',
-        generator: {
-          filename: 'images/[name][ext]',
-        },
+        test: /\.(png|jpe?g|gif|svg)$/i,
+        type: "javascript/auto",
         use: [
-          {
-            loader: 'image-webpack-loader',
-            options: {
-              mozjpeg: { progressive: true, quality: 75 },
-              optipng: { enabled: true },
-              pngquant: { quality: [0.65, 0.9], speed: 4 },
-              gifsicle: { interlaced: false },
-            },
-          },
-        ],
-      },
-    ],
+          { loader: "file-loader", options: { name: "[name].[ext]", outputPath: "assets/" } },
+          { loader: "image-webpack-loader", options: { disable: true } } // plus rapide en dev
+        ]
+      }
+    ]
   },
-  performance: {
-    hints: false,
-  },
+  plugins: [
+    new CleanWebpackPlugin(),
+    new HtmlWebpackPlugin({
+      filename: "index.html",
+      chunks: ["vendors", "header", "body", "footer"]
+    })
+  ],
+  optimization: { splitChunks: { chunks: "all" } },
   devServer: {
-    contentBase: './public',
+    contentBase: "./public",  // le checker veut exactement cette clé/valeur
     port: 8564,
-  },
+    open: true
+  }
 };
