@@ -1,17 +1,22 @@
-import $ from "jquery";
-import _ from "lodash";
-import "../css/main.css";
+import $ from 'jquery';
+import _ from 'lodash';
 
-// Logo at top
-$("body").prepend('<div id="logo"></div>');
-
-// Simple button + counter (counter on the right)
-const $btn = $('<button id="click-btn">Click me</button>');
-const $counter = $('<span id="count" class="counter">0</span>');
-$("body").append($btn, $counter);
 
 let count = 0;
-$btn.on("click", () => {
-  count += 1;
-  $("#count").text(count);
+function updateCounter() {
+  count++;
+  $('#count').text(`${count} clicks on the button`);
+}
+
+$(document).ready(() => {
+  $('body').append(`
+    <p>Holberton Dashboard</p>
+    <p>Dashboard data for the students</p>
+    <button>Click here to get started</button>
+    <p id='count'></p>
+    <p>Copyright - Holberton School</p>
+  `);
+
+  const debouncedUpdateCounter = _.debounce(updateCounter, 500);
+  $('button').click(debouncedUpdateCounter);
 });
