@@ -1,16 +1,26 @@
-import React from "react"; // ✅ nécessaire pour Jest avec JSX
-import { render, screen } from "@testing-library/react";
-import App from "./App";
+import React from "react";
+import './App.css';
+import logo from './assets/holberton-logo.jpg';
 
-test("renders School dashboard heading", () => {
-  render(<App />);
-  expect(screen.getByText(/School dashboard/i)).toBeInTheDocument();
-});
-
-test("renders footer with current year", () => {
-  render(<App />);
+function App() {
   const currentYear = new Date().getFullYear();
-  expect(
-    screen.getByText(new RegExp(`Copyright ${currentYear} - holberton School`, "i"))
-  ).toBeInTheDocument();
-});
+
+  return (
+    <div className="App">
+      <div className="App-header">
+        <img src={logo} className="App-logo" alt="holberton logo" />
+        <h1>School dashboard</h1>
+      </div>
+
+      <div className="App-body">
+        <p>Login to access the full dashboard</p>
+      </div>
+
+      <div className="App-footer">
+        <p>Copyright {currentYear} - holberton School</p>
+      </div>
+    </div>
+  );
+}
+
+export default App;
