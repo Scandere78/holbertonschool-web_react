@@ -1,6 +1,9 @@
-// fileTransformer.js
+import path from "path";
+
 export default {
-  process() {
-    return { code: "module.exports = {};" };
+  process(_, filename) {
+    return {
+      code: `export default ${JSON.stringify(path.basename(filename))};`,
+    };
   },
 };
