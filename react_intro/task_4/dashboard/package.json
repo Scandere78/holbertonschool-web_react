@@ -3,6 +3,7 @@
   "private": true,
   "version": "0.0.0",
   "type": "module",
+  "homepage": "https://Scandere78.github.io/holbertonschool-web_react",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
