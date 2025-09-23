@@ -1,8 +1,8 @@
 import React from "react";
-import './App.css';
-import logo from './assets/holberton-logo.jpg';
+import './Header.css';
+import logo from '../assets/holberton-logo.jpg';
 
-function App() {
+function Header() {
 
   return (
     <>
@@ -14,4 +14,4 @@ function App() {
   );
 }
 
-export default App;
+export default Header;

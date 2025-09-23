@@ -2,15 +2,13 @@ import React from "react";
 import { render, screen } from "@testing-library/react";
 import App from "./App";
 
-test("renders heading with text 'School dashboard'", () => {
+test("renders all components correctly", () => {
   render(<App />);
+
   expect(
     screen.getByRole("heading", { level: 1, name: /School dashboard/i })
   ).toBeInTheDocument();
-});
 
-test("renders correct text in body and footer", () => {
-  render(<App />);
   expect(
     screen.getByText(/Login to access the full dashboard/i)
   ).toBeInTheDocument();
@@ -21,9 +19,6 @@ test("renders correct text in body and footer", () => {
       new RegExp(`Copyright ${currentYear} - holberton School`, "i")
     )
   ).toBeInTheDocument();
-});
 
-test("renders the Holberton logo", () => {
-  render(<App />);
   expect(screen.getByAltText(/holberton logo/i)).toBeInTheDocument();
 });
