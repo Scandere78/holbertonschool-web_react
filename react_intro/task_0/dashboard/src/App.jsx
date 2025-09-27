@@ -1,24 +1,25 @@
-import React from 'react';
 import './App.css';
 import logo from './assets/holberton-logo.jpg';
 
-export default function App() {
+function App() {
   const year = new Date().getFullYear();
 
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} alt="holberton logo" className="logo" />
+    <>
+      <div className="App-header">
+        <img src={logo} alt="holberton logo" />
         <h1>School dashboard</h1>
-      </header>
+      </div>
 
-      <main className="App-body">
+      <div className="App-body">
         <p>Login to access the full dashboard</p>
-      </main>
+      </div>
 
-      <footer className="App-footer">
-        <p><em>Copyright {year} - holberton School</em></p>
-      </footer>
-    </div>
+      <div className="App-footer">
+        <p>Copyright {year} - holberton School</p>
+      </div>
+    </>
   );
 }
+
+export default App;
