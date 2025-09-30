@@ -1,25 +1,23 @@
-import './App.css';
-import logo from './assets/holberton-logo.jpg';
+import { useState } from 'react'
+import './App.css'
+import holbertonLogo from './assets/holberton-logo.jpg'
+import { getCurrentYear, getFooterCopy } from './utils.js'
 
 function App() {
-  const year = new Date().getFullYear();
-
   return (
     <>
-      <div className="App-header">
-        <img src={logo} alt="holberton logo" />
+      <div class="App-header">
+        <img src={holbertonLogo} alt="holberton logo" className="App-logo" />
         <h1>School dashboard</h1>
       </div>
-
-      <div className="App-body">
+      <div class="App-body">
         <p>Login to access the full dashboard</p>
       </div>
-
-      <div className="App-footer">
-        <p>Copyright {year} - holberton School</p>
+      <div class="App-footer">
+        <p>Copyright { getCurrentYear() } - { getFooterCopy(true) }</p>
       </div>
     </>
-  );
+  )
 }
 
-export default App;
+export default App
