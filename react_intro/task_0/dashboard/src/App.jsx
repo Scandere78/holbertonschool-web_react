@@ -1,20 +1,19 @@
 import { useState } from 'react'
 import './App.css'
 import holbertonLogo from './assets/holberton-logo.jpg'
-import { getCurrentYear, getFooterCopy } from './utils.js'
 
 function App() {
   return (
     <>
-      <div class="App-header">
+      <div className="App-header">
         <img src={holbertonLogo} alt="holberton logo" className="App-logo" />
         <h1>School dashboard</h1>
       </div>
-      <div class="App-body">
+      <div className="App-body">
         <p>Login to access the full dashboard</p>
       </div>
-      <div class="App-footer">
-        <p>Copyright { getCurrentYear() } - { getFooterCopy(true) }</p>
+      <div className="App-footer">
+        <p>Copyright 2025 - holberton School</p>
       </div>
     </>
   )
