@@ -1,26 +1,30 @@
-import { render, screen } from '@testing-library/react'
-import App from './App.jsx'
+// task_0/dashboard/src/App.spec.js
+import React from 'react';
+import { render, screen } from '@testing-library/react';
+import App from './App';
 
-test('Verify if h1 contain School dashboard', () => {
-  render(<App />)
-  const h1Element = screen.getByRole('heading', { 
-    level: 1, 
-    name: /school dashboard/i 
+describe('App (Task 0)', () => {
+  test('renders the <h1> with text "School dashboard"', () => {
+    render(<App />);
+    expect(
+      screen.getByRole('heading', { level: 1, name: /school dashboard/i })
+    ).toBeInTheDocument(); // expect #1
   });
-  expect(h1Element).toBeInTheDocument();
-})
 
-test('Verify if the content of the two paragraph', () => {
-  render(<App />)
-  const BodyParaph = screen.getByText('Login to access the full dashboard');
-  expect(BodyParaph).toBeInTheDocument();
+  test('renders body/footer texts and the logo image', () => {
+    render(<App />);
+    const year = new Date().getFullYear();
 
-  const FooterParaph = screen.getByText('Copyright 2025 - holberton School');
-  expect(FooterParaph).toBeInTheDocument();
-})
+    expect(
+      screen.getByText(/login to access the full dashboard/i)
+    ).toBeInTheDocument(); // expect #2
 
-test('Verify if the image element is rendered', () => {
-  render(<App />)
-  const Image = screen.getByAltText(/holberton logo/i);
-  expect(Image).toBeInTheDocument();
-})
+    expect(
+      screen.getByText(new RegExp(`Copyright\\s+${year}\\s+-\\s+holberton\\s+School`, 'i'))
+    ).toBeInTheDocument(); // expect #3
+
+    expect(
+      screen.getByRole('img', { name: /holberton logo/i })
+    ).toBeInTheDocument(); // expect #4
+  });
+});
