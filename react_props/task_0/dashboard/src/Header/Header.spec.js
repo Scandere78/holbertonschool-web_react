@@ -1,15 +1,19 @@
-import React from "react";
-import { render, screen } from "@testing-library/react";
-import Header from "./Header";
+import React from 'react';
+import { render, screen } from '@testing-library/react';
+import '@testing-library/jest-dom';
+import Header from './Header';
 
-test("renders heading with text 'School dashboard'", () => {
-  render(<Header />);
-  expect(
-    screen.getByRole("heading", { level: 1, name: /School dashboard/i })
-  ).toBeInTheDocument();
-});
+describe('Header', () => {
+  test('renders the title', () => {
+    render(<Header />);
+    expect(screen.getByRole('heading', { name: /school dashboard/i })).toBeInTheDocument();
+  });
 
-test("renders the Holberton logo", () => {
-  render(<Header />);
-  expect(screen.getByAltText(/holberton logo/i)).toBeInTheDocument();
+  test('renders the Holberton logo with alt text', () => {
+    render(<Header />);
+    const img = screen.getByAltText(/holberton logo/i);
+    expect(img).toBeInTheDocument();
+    // optional: ensure it’s inside the correct container
+    expect(img.closest('.App-header')).toBeInTheDocument();
+  });
 });
