@@ -1,19 +1,20 @@
-import React, { Fragment } from "react";
+import React, { Fragment } from 'react';
 import './App.css';
+
 import Notifications from '../Notifications/Notifications';
 import Header from '../Header/Header';
-import Footer from '../Footer/Footer';
 import Login from '../Login/Login';
-
+import Footer from '../Footer/Footer';
 
 function App() {
-
   return (
     <Fragment>
-      <Notifications/>
-      <Header/>
+      <div className="root-notifications">
+        <Notifications />
+      </div>
+      <Header />
       <Login />
-      <Footer/>
+      <Footer />
     </Fragment>
   );
 }

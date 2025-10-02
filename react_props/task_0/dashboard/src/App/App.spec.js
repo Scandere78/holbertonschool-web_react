@@ -1,24 +1,28 @@
-import React from "react";
-import { render, screen } from "@testing-library/react";
-import App from "./App";
+// react_intro/task_2/dashboard/src/App.spec.js
+import React from 'react';
+import { render, screen } from '@testing-library/react';
+import App from './App';
 
-test("renders all components correctly", () => {
-  render(<App />);
+describe('App (Task 2) - sign in form', () => {
+  test('renders two input elements (email and password)', () => {
+    const { container } = render(<App />);
 
-  expect(
-    screen.getByRole("heading", { level: 1, name: /School dashboard/i })
-  ).toBeInTheDocument();
+    // Cible par label (insensible à la casse)
+    expect(screen.getByLabelText(/email/i)).toBeInTheDocument();
+    expect(screen.getByLabelText(/password/i)).toBeInTheDocument();
 
-  expect(
-    screen.getByText(/Login to access the full dashboard/i)
-  ).toBeInTheDocument();
+    // Vérifie qu’il y a exactement 2 <input>
+    expect(container.querySelectorAll('input')).toHaveLength(2);
+  });
 
-  const currentYear = new Date().getFullYear();
-  expect(
-    screen.getByText(
-      new RegExp(`Copyright ${currentYear} - holberton School`, "i")
-    )
-  ).toBeInTheDocument();
+  test('renders two labels with texts "Email" and "Password"', () => {
+    render(<App />);
+    expect(screen.getByText(/email/i).tagName).toBe('LABEL');
+    expect(screen.getByText(/password/i).tagName).toBe('LABEL');
+  });
 
-  expect(screen.getByAltText(/holberton logo/i)).toBeInTheDocument();
+  test('renders a button with text OK', () => {
+    render(<App />);
+    expect(screen.getByRole('button', { name: /ok/i })).toBeInTheDocument();
+  });
 });
