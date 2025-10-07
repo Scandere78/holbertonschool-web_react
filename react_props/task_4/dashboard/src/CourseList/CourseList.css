@@ -1,0 +1,21 @@
+#CourseList {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+}
+
+#CourseList th,
+#CourseList td {
+  border: 1px solid #ddd;
+  padding: 8px;
+  text-align: left;
+}
+
+#CourseList th {
+  background-color: #f2f2f2;
+  font-weight: bold;
+}
+
+#CourseList tr:nth-child(even) {
+  background-color: #f9f9f9;
+}
