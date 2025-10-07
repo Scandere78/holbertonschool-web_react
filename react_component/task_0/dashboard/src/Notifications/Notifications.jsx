@@ -9,7 +9,7 @@ function Notifications() {
   };
 
   return (
-    <div className="notification-items">
+    <div className="Notifications">
       <button
         style={{
           position: 'absolute',
