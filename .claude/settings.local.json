@@ -6,7 +6,11 @@
       "Bash(git checkout:*)",
       "Bash(git reset:*)",
       "Bash(npm test:*)",
-      "Bash(git add:*)"
+      "Bash(git add:*)",
+      "Bash(node app-testRunner.js)",
+      "Bash(cat:*)",
+      "Bash(node:*)",
+      "Bash(xargs cat:*)"
     ],
     "deny": [],
     "ask": []
