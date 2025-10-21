@@ -10,7 +10,10 @@
       "Bash(node app-testRunner.js)",
       "Bash(cat:*)",
       "Bash(node:*)",
-      "Bash(xargs cat:*)"
+      "Bash(xargs cat:*)",
+      "Bash(cp -r react_component/task_5 react_styling/task_0)",
+      "Bash(npm install @tailwindcss/vite)",
+      "Bash(npm install @fontsource/roboto)"
     ],
     "deny": [],
     "ask": []
