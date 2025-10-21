@@ -1,8 +1,7 @@
-@import "tailwindcss/base";
-@import "tailwindcss/components";
-@import "tailwindcss/utilities";
+@import "tailwindcss";
 
-:root {
+@theme {
+  --font-sans: 'Roboto', sans-serif;
   --color-table-header: #deb5b5;
   --color-table-rows: #CDCDCD;
   --main-color: #e1003c;
@@ -11,5 +10,5 @@
 }
 
 body {
-  font-family: 'Roboto', sans-serif;
+  font-family: theme(--font-sans);
 }
