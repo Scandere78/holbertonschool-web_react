@@ -21,6 +21,11 @@ class App extends React.Component {
     isLoggedIn: false,
   };
 
+  constructor(props) {
+    super(props);
+    this.listCourses = [];
+  }
+
   componentDidMount() {
     document.addEventListener("keydown", this.handleKeyDown);
   }
@@ -48,7 +53,7 @@ class App extends React.Component {
 
         {isLoggedIn ? (
           <BodySectionWithMarginBottom title="Course list">
-            <CourseList />
+            <CourseList courses={this.listCourses} />
           </BodySectionWithMarginBottom>
         ) : (
           <BodySectionWithMarginBottom title="Log in to continue">

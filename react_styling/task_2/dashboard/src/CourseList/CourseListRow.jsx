@@ -2,13 +2,12 @@ import React from 'react';
 import PropTypes from 'prop-types';
 
 function CourseListRow({ isHeader, textFirstCell, textSecondCell }) {
-  const headerBgColor = 'var(--color-table-header)';
-  const rowBgColor = 'var(--color-table-rows)';
-  const backgroundColor = isHeader ? headerBgColor : rowBgColor;
-  const opacity = isHeader ? '66' : '45';
+  const backgroundColor = isHeader ? '#deb5b5' : '#CDCDCD';
+  const opacity = isHeader ? 0.66 : 0.45;
 
   const style = {
-    backgroundColor: `${backgroundColor}${opacity}`,
+    backgroundColor,
+    opacity,
   };
 
   if (isHeader) {
