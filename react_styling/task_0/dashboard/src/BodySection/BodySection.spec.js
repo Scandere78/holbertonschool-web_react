@@ -2,30 +2,27 @@ import React from 'react';
 import { render, screen } from '@testing-library/react';
 import BodySection from './BodySection';
 
-describe('BodySection component', () => {
-  test('renders a heading with the title prop value', () => {
-    render(<BodySection title="test title" />);
-    const heading = screen.getByRole('heading', { level: 2 });
-    expect(heading).toHaveTextContent('test title');
-  });
-
-  test('renders one child paragraph correctly', () => {
+describe('BodySection', () => {
+  test('renders a heading with the title prop', () => {
     render(
-      <BodySection title="test title">
-        <p>test child paragraph</p>
+      <BodySection title="test-title">
+        <p>child</p>
       </BodySection>
     );
-    expect(screen.getByText('test child paragraph')).toBeInTheDocument();
+    expect(screen.getByRole('heading', { level: 2, name: 'test-title' })).toBeInTheDocument();
   });
 
-  test('renders multiple children correctly', () => {
+  test('renders any number of children passed to it', () => {
     render(
-      <BodySection title="test title">
-        <p>first child</p>
-        <p>second child</p>
+      <BodySection title="title">
+        <p>child 1</p>
+        <p>child 2</p>
+        <span>child 3</span>
       </BodySection>
     );
-    expect(screen.getByText('first child')).toBeInTheDocument();
-    expect(screen.getByText('second child')).toBeInTheDocument();
+    // 3 enfants rendus
+    expect(screen.getByText('child 1')).toBeInTheDocument();
+    expect(screen.getByText('child 2')).toBeInTheDocument();
+    expect(screen.getByText('child 3')).toBeInTheDocument();
   });
 });

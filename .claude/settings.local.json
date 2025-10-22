@@ -16,7 +16,8 @@
       "Bash(npm install @fontsource/roboto)",
       "Bash(for task in task_3 task_4 task_5)",
       "Bash(do sed -i \"3i import ''''./main.css''''\" react_styling/$task/dashboard/src/main.jsx sed -i '/^import.*@fontsource.*$/d' react_styling/$task/dashboard/src/main.jsx)",
-      "Bash(head -1 sed -i \"4i import ''''@fontsource/roboto/400.css''''\" react_styling/$task/dashboard/src/main.jsx sed -i \"5i import ''''@fontsource/roboto/500.css''''\" react_styling/$task/dashboard/src/main.jsx sed -i \"6i import ''''@fontsource/roboto/700.css''''\" react_styling/$task/dashboard/src/main.jsx done)"
+      "Bash(head -1 sed -i \"4i import ''''@fontsource/roboto/400.css''''\" react_styling/$task/dashboard/src/main.jsx sed -i \"5i import ''''@fontsource/roboto/500.css''''\" react_styling/$task/dashboard/src/main.jsx sed -i \"6i import ''''@fontsource/roboto/700.css''''\" react_styling/$task/dashboard/src/main.jsx done)",
+      "WebSearch"
     ],
     "deny": [],
     "ask": []

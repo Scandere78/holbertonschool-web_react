@@ -7,6 +7,7 @@ import NotificationItem from './NotificationItem';
 
 class Notifications extends React.Component {
   static propTypes = {
+    displayDrawer: PropTypes.bool,
     notifications: PropTypes.arrayOf(
       PropTypes.shape({
         id: PropTypes.number.isRequired,
@@ -20,6 +21,7 @@ class Notifications extends React.Component {
   };
 
   static defaultProps = {
+    displayDrawer: true,
     notifications: [
       { id: 1, type: 'default', value: 'New course available' },
       { id: 2, type: 'urgent', value: 'New resume available' },
@@ -40,7 +42,12 @@ class Notifications extends React.Component {
   };
 
   render() {
-    const { notifications } = this.props;
+    const { notifications, displayDrawer } = this.props;
+
+    // Si displayDrawer est false, ne rien afficher
+    if (!displayDrawer) {
+      return null;
+    }
 
     return (
       <div className="Notifications">
@@ -59,18 +66,22 @@ class Notifications extends React.Component {
           <img src={closeIcon} alt="close" />
         </button>
         <p>Here is the list of notifications</p>
-        <ul>
-          {notifications.map((notification) => (
-            <NotificationItem
-              key={notification.id}
-              id={notification.id}
-              type={notification.type}
-              value={notification.value}
-              html={notification.html}
-              markAsRead={this.markAsRead}
-            />
-          ))}
-        </ul>
+        {notifications.length === 0 ? (
+          <p>No new notification for now</p>
+        ) : (
+          <ul>
+            {notifications.map((notification) => (
+              <NotificationItem
+                key={notification.id}
+                id={notification.id}
+                type={notification.type}
+                value={notification.value}
+                html={notification.html}
+                markAsRead={this.markAsRead}
+              />
+            ))}
+          </ul>
+        )}
       </div>
     );
   }
