@@ -1,49 +1,53 @@
-import React from 'react';
+import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 
-class NotificationItem extends React.PureComponent {
+export default class NotificationItem extends PureComponent {
   static propTypes = {
-    type: PropTypes.string.isRequired,
+    id: PropTypes.oneOfType([PropTypes.number, PropTypes.string]).isRequired,
+    type: PropTypes.string,
     value: PropTypes.string,
-    html: PropTypes.shape({
-      __html: PropTypes.string,
-    }),
+    html: PropTypes.shape({ __html: PropTypes.string }),
     markAsRead: PropTypes.func,
-    id: PropTypes.number,
   };
 
   static defaultProps = {
     type: 'default',
     markAsRead: () => {},
-    id: 0,
   };
 
   handleClick = () => {
-    const { markAsRead, id } = this.props;
+    const { id, markAsRead } = this.props;
     markAsRead(id);
   };
 
   render() {
-    const { type, value, html } = this.props;
-    const color = type === 'urgent' ? 'var(--urgent-notification-item)' : 'var(--default-notification-item)';
+    const { type, html, value } = this.props;
+    const style = {
+      color:
+        type === 'urgent'
+          ? 'var(--urgent-notification-item)'
+          : 'var(--default-notification-item)',
+    };
 
     if (html) {
       return (
         <li
-          data-priority={type}
-          dangerouslySetInnerHTML={html}
+          data-notification-type={type}
+          style={style}
           onClick={this.handleClick}
-          style={{ color }}
+          dangerouslySetInnerHTML={html}
         />
       );
     }
 
     return (
-      <li data-priority={type} onClick={this.handleClick} style={{ color }}>
+      <li
+        data-notification-type={type}
+        style={style}
+        onClick={this.handleClick}
+      >
         {value}
       </li>
     );
   }
 }
-
-export default NotificationItem;

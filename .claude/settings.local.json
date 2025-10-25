@@ -19,7 +19,13 @@
       "Bash(head -1 sed -i \"4i import ''''@fontsource/roboto/400.css''''\" react_styling/$task/dashboard/src/main.jsx sed -i \"5i import ''''@fontsource/roboto/500.css''''\" react_styling/$task/dashboard/src/main.jsx sed -i \"6i import ''''@fontsource/roboto/700.css''''\" react_styling/$task/dashboard/src/main.jsx done)",
       "WebSearch",
       "Bash(npm install)",
-      "Bash(npm run build:*)"
+      "Bash(npm run build:*)",
+      "Bash(do)",
+      "Bash(echo:*)",
+      "Bash(done)",
+      "Bash(for task in task_0 task_1 task_2 task_3 task_4 task_5)",
+      "Bash(do echo \"=== $task ===\" cd $task/dashboard)",
+      "Read(//c/Users/scand/OneDrive/Bureau/**)"
     ],
     "deny": [],
     "ask": []
