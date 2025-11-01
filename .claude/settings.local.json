@@ -29,7 +29,13 @@
       "Bash(cp:*)",
       "Bash(do echo \"=== $task ===\")",
       "Bash(do sed -i 's/\"\"react\"\": \"\"^19.1.1\"\"/\"\"react\"\": \"\"^18.3.1\"\"/g' $task/dashboard/package.json)",
-      "Bash(do sed -i 's/\"\"react-dom\"\": \"\"^19.1.1\"\"/\"\"react-dom\"\": \"\"^18.3.1\"\"/g' $task/dashboard/package.json)"
+      "Bash(do sed -i 's/\"\"react-dom\"\": \"\"^19.1.1\"\"/\"\"react-dom\"\": \"\"^18.3.1\"\"/g' $task/dashboard/package.json)",
+      "Bash(for task in task_0 task_1 task_2 task_4)",
+      "Bash(do echo \"Updating $task...\")",
+      "Bash(rm -rf $task)",
+      "Bash(rm:*)",
+      "Bash(do echo '=== $task ===')",
+      "Bash(ls:*)"
     ],
     "deny": [],
     "ask": []
