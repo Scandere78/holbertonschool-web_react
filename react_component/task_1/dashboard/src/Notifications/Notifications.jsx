@@ -1,37 +1,67 @@
-import React from 'react';
+import PropTypes from 'prop-types';
 import './Notifications.css';
-import closeIcon from '../assets/close-button.png';
-import { getLatestNotification } from '../utils/utils';
+import closebtn from '../assets/close-button.png';
+import NotificationItem from './NotificationItem';
 
-function Notifications() {
-  const handleCloseClick = () => {
-    console.log('Close button has been clicked');
-  };
+export default function Notifications({
+  notifications = [],
+  displayDrawer = false, // <= par défaut false (exigence Task 5)
+}) {
+  // Titre toujours visible
+  const Title = (
+    <div className="notification-title" data-testid="notifications-title">
+      <p>Your notifications</p>
+    </div>
+  );
+
+  // Contenu du tiroir (uniquement si displayDrawer === true)
+  const Drawer = displayDrawer ? (
+    <div className="notifications">
+      <div className="notification-items">
+        {notifications.length > 0 ? (
+          <>
+            <p>Here is the list of notifications</p>
+            <button
+              onClick={() => console.log('Close button has been clicked')}
+              aria-label="Close"
+              className="notifications-close"
+            >
+              <img src={closebtn} alt="Close" />
+            </button>
+            <ul>
+              {notifications.map((n) => (
+                <NotificationItem
+                  key={n.id}
+                  type={n.type}
+                  value={n.value}
+                  html={n.html}
+                />
+              ))}
+            </ul>
+          </>
+        ) : (
+          <p className="notifications-empty">No new notification for now</p>
+        )}
+      </div>
+    </div>
+  ) : null;
 
   return (
-    <div className="Notifications">
-      <button
-        style={{
-          position: 'absolute',
-          top: '10px',
-          right: '10px',
-          background: 'transparent',
-          border: 'none',
-          cursor: 'pointer'
-        }}
-        aria-label="Close"
-        onClick={handleCloseClick}
-      >
-        <img src={closeIcon} alt="close" />
-      </button>
-      <p>Here is the list of notifications</p>
-      <ul>
-        <li data-priority="default">New course available</li>
-        <li data-priority="urgent">New resume available</li>
-        <li dangerouslySetInnerHTML={{ __html: getLatestNotification() }}></li>
-      </ul>
-    </div>
+    <>
+      {Title}
+      {Drawer}
+    </>
   );
 }
 
-export default Notifications;
+Notifications.propTypes = {
+  notifications: PropTypes.arrayOf(
+    PropTypes.shape({
+      id: PropTypes.oneOfType([PropTypes.number, PropTypes.string]).isRequired,
+      type: PropTypes.string,
+      value: PropTypes.string,
+      html: PropTypes.shape({ __html: PropTypes.string }),
+    })
+  ),
+  displayDrawer: PropTypes.bool,
+};

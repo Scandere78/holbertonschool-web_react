@@ -1,49 +1,61 @@
-import React from 'react';
-import PropTypes from 'prop-types';
+import React from "react";
+import CourseListRow from "./CourseListRow";
+import './CourseList.css'
+import WithLogging from '../HOC/WithLogging';
 
-class CourseList extends React.Component {
-  static propTypes = {
-    courses: PropTypes.arrayOf(
-      PropTypes.shape({
-        id: PropTypes.number.isRequired,
-        name: PropTypes.string.isRequired,
-        credit: PropTypes.number.isRequired,
-      })
-    ),
-  };
-
-  static defaultProps = {
-    courses: [],
-  };
-
-  render() {
-    const { courses } = this.props;
-
-    return (
-      <table>
-        <thead>
-          <tr>
-            <th>Course name</th>
-            <th>Credit</th>
-          </tr>
-        </thead>
+// export default function CourseList({ courses=[] }) {
+// 	return (
+// 		<table id="CourseList">
+// 			{courses.length > 0 ? (
+// 				<>
+// 					<thead>
+// 						<CourseListRow isHeader={true} textFirstCell="Available courses" />
+// 						<CourseListRow isHeader={true} textFirstCell="Course name" textSecondCell="Credit" />
+// 					</thead>
+// 					<tbody>
+// 						{courses.map((course) => (
+// 							<CourseListRow
+// 								key={course.id}
+// 								textFirstCell={course.name}
+// 								textSecondCell={course.credit}
+// 							/>
+// 						))}
+// 					</tbody>
+// 				</>
+// 				) : (
+// 					<tbody>
+// 						<CourseListRow isHeader={true} textFirstCell="No course available yet" />
+// 					</tbody>
+// 					)}
+// 		</table>
+// 	);
+// }
+function CourseList({ courses = [] }) {
+  return (
+    <table id="CourseList">
+      {courses.length > 0 ? (
+        <>
+          <thead>
+            <CourseListRow isHeader={true} textFirstCell="Available courses" />
+            <CourseListRow isHeader={true} textFirstCell="Course name" textSecondCell="Credit" />
+          </thead>
+          <tbody>
+            {courses.map((course) => (
+              <CourseListRow
+                key={course.id}
+                textFirstCell={course.name}
+                textSecondCell={course.credit}
+              />
+            ))}
+          </tbody>
+        </>
+      ) : (
         <tbody>
-          {courses.length === 0 ? (
-            <tr>
-              <td colSpan="2">No course available yet</td>
-            </tr>
-          ) : (
-            courses.map((course) => (
-              <tr key={course.id}>
-                <td>{course.name}</td>
-                <td>{course.credit}</td>
-              </tr>
-            ))
-          )}
+          <CourseListRow isHeader={true} textFirstCell="No course available yet" />
         </tbody>
-      </table>
-    );
-  }
+      )}
+    </table>
+  );
 }
 
-export default CourseList;
+export default WithLogging(CourseList);

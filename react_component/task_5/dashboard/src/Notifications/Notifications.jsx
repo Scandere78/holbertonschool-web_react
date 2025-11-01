@@ -1,79 +1,94 @@
-import React from 'react';
+import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import './Notifications.css';
-import closeIcon from '../assets/close-button.png';
-import { getLatestNotification } from '../utils/utils';
+import closebtn from '../assets/close-button.png';
 import NotificationItem from './NotificationItem';
 
-class Notifications extends React.Component {
+// export default function Notifications({
+//   notifications = [],
+//   displayDrawer = false, // <= par défaut false (exigence Task 5)
+// }) {
+
+export default class Notifications extends Component {
   static propTypes = {
     notifications: PropTypes.arrayOf(
       PropTypes.shape({
-        id: PropTypes.number.isRequired,
-        type: PropTypes.string.isRequired,
+        id: PropTypes.oneOfType([PropTypes.number, PropTypes.string]).isRequired,
+        type: PropTypes.string,
         value: PropTypes.string,
-        html: PropTypes.shape({
-          __html: PropTypes.string,
-        }),
+        html: PropTypes.shape({ __html: PropTypes.string }),
       })
     ),
+    displayDrawer: PropTypes.bool,
   };
 
+  // par défaut false (exigence Task 5)
   static defaultProps = {
-    notifications: [
-      { id: 1, type: 'default', value: 'New course available' },
-      { id: 2, type: 'urgent', value: 'New resume available' },
-      { id: 3, type: 'urgent', html: { __html: getLatestNotification() } },
-    ],
+    notifications: [],
+    displayDrawer: false,
   };
 
+  /** IMPORTANT (Task 7):
+   *  Ne re-render que si la longueur de notifications change
+   */
   shouldComponentUpdate(nextProps) {
     return nextProps.notifications.length !== this.props.notifications.length;
   }
 
-  handleCloseClick = () => {
-    console.log('Close button has been clicked');
-  };
-
+  // méthode demandée par l'exo
   markAsRead = (id) => {
     console.log(`Notification ${id} has been marked as read`);
   };
 
   render() {
-    const { notifications } = this.props;
+    const { notifications, displayDrawer } = this.props;
 
-    return (
-      <div className="Notifications">
-        <button
-          style={{
-            position: 'absolute',
-            top: '10px',
-            right: '10px',
-            background: 'transparent',
-            border: 'none',
-            cursor: 'pointer'
-          }}
-          aria-label="Close"
-          onClick={this.handleCloseClick}
-        >
-          <img src={closeIcon} alt="close" />
-        </button>
-        <p>Here is the list of notifications</p>
-        <ul>
-          {notifications.map((notification) => (
-            <NotificationItem
-              key={notification.id}
-              id={notification.id}
-              type={notification.type}
-              value={notification.value}
-              html={notification.html}
-              markAsRead={this.markAsRead}
-            />
-          ))}
-        </ul>
+  // Titre toujours visible
+  const Title = (
+    <div className="notification-title" data-testid="notifications-title">
+      <p>Your notifications</p>
+    </div>
+  );
+
+  // Contenu du tiroir (uniquement si displayDrawer === true)
+  const Drawer = displayDrawer ? (
+    <div className="notifications">
+      <div className="notification-items">
+        {notifications.length > 0 ? (
+          <>
+            <p>Here is the list of notifications</p>
+            <button
+              onClick={() => console.log('Close button has been clicked')}
+              aria-label="Close"
+              className="notifications-close"
+            >
+              <img src={closebtn} alt="Close" />
+            </button>
+            <ul>
+              {notifications.map((n) => (
+                <NotificationItem
+                  key={n.id}
+                  id={n.id}
+                  type={n.type}
+                  value={n.value}
+                  html={n.html}
+                  markAsRead={this.markAsRead}
+                />
+              ))}
+            </ul>
+          </>
+        ) : (
+          <p className="notifications-empty">No new notification for now</p>
+        )}
       </div>
-    );
-  }
-}
+    </div>
+  ) : null;
 
-export default Notifications;
+  return (
+    <>
+      {Title}
+      {Drawer}
+    </>
+  );
+}
+}
