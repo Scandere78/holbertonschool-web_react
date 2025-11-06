@@ -1,15 +1,18 @@
+// import React from 'react';
 import React, { useContext } from 'react';
-import { getCurrentYear, getFooterCopy } from '../utils/utils';
-import AppContext from '../Context/context';
+import AppContext, { defaultUser } from '../Context/context';
 
-function Footer() {
-  const { user } = useContext(AppContext);
+export default function Footer() {
+  const ctx = useContext(AppContext) || {};
+  // const { user } = useContext(AppContext);
+  // const { user } = context;
+  // const year = new Date().getFullYear();
+  const user = ctx.user ?? defaultUser;
+  const year = new Date().getFullYear();
 
   return (
-    <footer className="App-footer">
-      <p>
-        Copyright {getCurrentYear()} - {getFooterCopy(true)}
-      </p>
+    <footer className="App-footer border-t-[3px] border-[var(--main-color)] py-2 text-center italic">
+      <p>Copyright {year} - Holberton School</p>
       {user.isLoggedIn && (
         <p>
           <a href="#">Contact us</a>
@@ -18,5 +21,3 @@ function Footer() {
     </footer>
   );
 }
-
-export default Footer;

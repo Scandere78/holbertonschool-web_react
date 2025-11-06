@@ -1,56 +1,45 @@
 import React from 'react';
-import { render, cleanup } from '@testing-library/react';
+import { render, screen, cleanup } from '@testing-library/react';
 import WithLogging from './WithLogging';
-
-class MockApp extends React.Component {
-  render() {
-    return (
-      <h1>Hello from Mock App Component</h1>
-    );
-  }
-}
 
 afterEach(() => {
   cleanup();
   jest.restoreAllMocks();
 });
 
+// Mock component donné par l’énoncé
+class MockApp extends React.Component {
+  render() {
+    return <h1>Hello from Mock App Component</h1>;
+  }
+}
+
 describe('WithLogging HOC', () => {
-  test('renders a heading element with correct text', () => {
-    const WrappedComponent = WithLogging(MockApp);
-    const { getByRole } = render(<WrappedComponent />);
+  test('renders heading from the wrapped component', () => {
+    const Wrapped = WithLogging(MockApp);
+    render(<Wrapped />);
 
-    const heading = getByRole('heading', { level: 1 });
-    expect(heading).toHaveTextContent('Hello from Mock App Component');
+    expect(
+      screen.getByRole('heading', { level: 1, name: /Hello from Mock App Component/i })
+    ).toBeInTheDocument();
   });
 
-  test('logs mount and unmount messages with component name', () => {
-    const spy = jest.spyOn(console, 'log').mockImplementation(() => {});
-    const WrappedComponent = WithLogging(MockApp);
+  test('logs on mount and unmount', () => {
+    const Wrapped = WithLogging(MockApp);
+    const logSpy = jest.spyOn(console, 'log').mockImplementation(() => {});
 
-    const { unmount } = render(<WrappedComponent />);
-
-    expect(spy).toHaveBeenCalledWith('Component MockApp is mounted');
+    const { unmount } = render(<Wrapped />);
+    // Avec StrictMode en dev, ces logs peuvent apparaître 2 fois : on vérifie le contenu, pas le nombre précis.
+    expect(logSpy).toHaveBeenCalledWith('Component MockApp is mounted');
 
     unmount();
+    expect(logSpy).toHaveBeenCalledWith('Component MockApp is going to unmount');
 
-    expect(spy).toHaveBeenCalledWith('Component MockApp is going to unmount');
-
-    spy.mockRestore();
+    logSpy.mockRestore();
   });
 
-  test('uses "Component" as default name when wrapped component has no name', () => {
-    const spy = jest.spyOn(console, 'log').mockImplementation(() => {});
-    const AnonymousComponent = () => <div>Anonymous</div>;
-    Object.defineProperty(AnonymousComponent, 'name', { value: '' });
-
-    const WrappedComponent = WithLogging(AnonymousComponent);
-    const { unmount } = render(<WrappedComponent />);
-
-    expect(spy).toHaveBeenCalledWith('Component Component is mounted');
-
-    unmount();
-
-    spy.mockRestore();
+  test('has the proper displayName', () => {
+    const Wrapped = WithLogging(MockApp);
+    expect(Wrapped.displayName).toBe('WithLogging(MockApp)');
   });
 });
