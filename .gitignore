@@ -61,3 +61,5 @@ Desktop.ini
 # Optional: Uncomment if you don't want to commit these
 # .eslintcache
 # .stylelintcache
+
+.claude

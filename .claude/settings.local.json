@@ -35,7 +35,10 @@
       "Bash(rm -rf $task)",
       "Bash(rm:*)",
       "Bash(do echo '=== $task ===')",
-      "Bash(ls:*)"
+      "Bash(ls:*)",
+      "Bash(curl:*)",
+      "Bash(tar -xzf:*)",
+      "Bash(wait)"
     ],
     "deny": [],
     "ask": []
