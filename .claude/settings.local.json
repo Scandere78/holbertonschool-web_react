@@ -38,7 +38,12 @@
       "Bash(ls:*)",
       "Bash(curl:*)",
       "Bash(tar -xzf:*)",
-      "Bash(wait)"
+      "Bash(wait)",
+      "Bash(for:*)",
+      "Bash(do if [ -d \"task_$i/dashboard/node_modules\" ])",
+      "Bash(then echo \"✓ Task $i: node_modules exists\")",
+      "Bash(else echo \"✗ Task $i: node_modules missing\")",
+      "Bash(fi)"
     ],
     "deny": [],
     "ask": []
