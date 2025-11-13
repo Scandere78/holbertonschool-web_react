@@ -4,31 +4,30 @@ import closeIcon from '../../assets/close-button.png';
 import NotificationItem from '../NotificationItem/NotificationItem';
 import {
   fetchNotifications,
-  markNotificationAsRead as markAsRead,
-  handleDisplayDrawer as displayDrawerAction,
-  handleHideDrawer as hideDrawerAction,
+  markNotificationAsRead,
+  showDrawer,
+  hideDrawer,
 } from '../../features/notifications/notificationsSlice';
 
 export default function Notifications() {
   const dispatch = useDispatch();
   const notifications = useSelector((state) => state.notifications.notifications);
   const displayDrawer = useSelector((state) => state.notifications.displayDrawer);
-  const loading = useSelector((state) => state.notifications.loading);
 
   useEffect(() => {
     dispatch(fetchNotifications());
   }, [dispatch]);
 
   const handleMarkAsRead = (id) => {
-    dispatch(markAsRead(id));
+    dispatch(markNotificationAsRead(id));
   };
 
   const onDisplayDrawer = () => {
-    dispatch(displayDrawerAction());
+    dispatch(showDrawer());
   };
 
   const onHideDrawer = () => {
-    dispatch(hideDrawerAction());
+    dispatch(hideDrawer());
   };
 
   const shouldBounce = notifications.length > 0 && !displayDrawer;
@@ -56,9 +55,7 @@ export default function Notifications() {
             className="relative mt-1 inline-block p-2 border border-dotted rounded-none bg-white w-[520px] text-left"
             style={{ borderColor: 'var(--main-color)' }}
           >
-            {loading ? (
-              <p className="m-0">Loading notifications...</p>
-            ) : notifications.length === 0 ? (
+            {notifications.length === 0 ? (
               <p className="notifications-empty m-0">No new notification for now</p>
             ) : (
               <>

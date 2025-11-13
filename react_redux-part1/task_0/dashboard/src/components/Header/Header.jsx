@@ -6,6 +6,7 @@ import { logout } from '../../features/auth/authSlice';
 export default function Header() {
   const dispatch = useDispatch();
   const user = useSelector((state) => state.auth.user);
+  const isLoggedIn = useSelector((state) => state.auth.isLoggedIn);
 
   const handleLogout = (e) => {
     e.preventDefault();
@@ -23,7 +24,7 @@ export default function Header() {
         School Dashboard
       </h1>
 
-      {user.isLoggedIn && (
+      {isLoggedIn && (
         <div id="logoutSection" data-testid="logoutSection" className="text-sm mt-2 ml-3">
           <span>
             Welcome <strong>{user.email}</strong>{' '}
