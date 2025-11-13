@@ -43,7 +43,8 @@
       "Bash(do if [ -d \"task_$i/dashboard/node_modules\" ])",
       "Bash(then echo \"✓ Task $i: node_modules exists\")",
       "Bash(else echo \"✗ Task $i: node_modules missing\")",
-      "Bash(fi)"
+      "Bash(fi)",
+      "Bash(do echo \"=== Building $task ===\" cd \"react_redux-part1/$task/dashboard\")"
     ],
     "deny": [],
     "ask": []

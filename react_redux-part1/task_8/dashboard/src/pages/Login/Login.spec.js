@@ -1,50 +1,90 @@
 import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react';
 import '@testing-library/jest-dom';
+import { Provider } from 'react-redux';
+import { configureStore } from '@reduxjs/toolkit';
 import Login from './Login';
+import authReducer from '../../features/auth/authSlice';
 
-describe('Login (Task 1) - Controlled components and state callback', () => {
+const mockStore = () => {
+  return configureStore({
+    reducer: {
+      auth: authReducer,
+    },
+    preloadedState: {
+      auth: { user: { email: '', password: '' }, isLoggedIn: false },
+    },
+  });
+};
+
+describe('Login - Redux integration', () => {
   test('renders the prompt text', () => {
-    render(<Login />);
+    const store = mockStore();
+    render(
+      <Provider store={store}>
+        <Login />
+      </Provider>
+    );
     expect(screen.getByText(/login to access the full dashboard/i)).toBeInTheDocument();
   });
 
   test('renders email and password fields with labels', () => {
-    render(<Login />);
+    const store = mockStore();
+    render(
+      <Provider store={store}>
+        <Login />
+      </Provider>
+    );
     expect(screen.getByLabelText(/email/i)).toBeInTheDocument();
     expect(screen.getByLabelText(/password/i)).toBeInTheDocument();
   });
 
   test('submit button is disabled by default', () => {
-    render(<Login />);
+    const store = mockStore();
+    render(
+      <Provider store={store}>
+        <Login />
+      </Provider>
+    );
     const submit = screen.getByRole('button', { name: /ok/i });
     expect(submit).toBeDisabled();
   });
 
   test('button becomes enabled only when email is valid and password has at least 8 chars', () => {
-    render(<Login />);
+    const store = mockStore();
+    render(
+      <Provider store={store}>
+        <Login />
+      </Provider>
+    );
 
     const emailInput = screen.getByLabelText(/email/i);
     const pwdInput = screen.getByLabelText(/password/i);
     const submit = screen.getByRole('button', { name: /ok/i });
 
-    // 1) Invalid email + short password -> désactivé
+    // 1) Invalid email + short password -> disabled
     fireEvent.change(emailInput, { target: { value: 'invalid' } });
     fireEvent.change(pwdInput, { target: { value: '123' } });
     expect(submit).toBeDisabled();
 
-    // 2) Email valide + short password -> désactivé
+    // 2) Valid email + short password -> disabled
     fireEvent.change(emailInput, { target: { value: 'user@test.com' } });
     fireEvent.change(pwdInput, { target: { value: 'short' } });
     expect(submit).toBeDisabled();
 
-    // 3) Email valide + password >= 8 -> activé
+    // 3) Valid email + password >= 8 -> enabled
     fireEvent.change(pwdInput, { target: { value: 'longpass' } }); // 8 chars
     expect(submit).toBeEnabled();
   });
 
   test('should not accept invalid email formats', () => {
-    render(<Login />);
+    const store = mockStore();
+    render(
+      <Provider store={store}>
+        <Login />
+      </Provider>
+    );
+
     const emailInput = screen.getByLabelText(/email/i);
     const pwdInput = screen.getByLabelText(/password/i);
     const submit = screen.getByRole('button', { name: /ok/i });
@@ -60,22 +100,21 @@ describe('Login (Task 1) - Controlled components and state callback', () => {
       'user@domain-.com',
       'user@domain.c',
       'user@domain,com',
-      // ' user@domain.com ',
     ];
 
     for (const email of invalidEmails) {
       fireEvent.change(emailInput, { target: { value: email } });
-      if (!submit.disabled) {
-        // <-- dis-nous qui passe à tort
-        console.error(`❌ EMAIL ACCEPTÉ PAR ERREUR : "${email}"`);
-      }
       expect(submit).toBeDisabled();
     }
   });
 
-  test('calls logIn(email, password) when form is valid and submitted', () => {
-    const logIn = jest.fn();
-    render(<Login logIn={logIn} />);
+  test('dispatches login action when form is valid and submitted', () => {
+    const store = mockStore();
+    render(
+      <Provider store={store}>
+        <Login />
+      </Provider>
+    );
 
     const emailInput = screen.getByLabelText(/email/i);
     const pwdInput = screen.getByLabelText(/password/i);
@@ -86,13 +125,20 @@ describe('Login (Task 1) - Controlled components and state callback', () => {
     expect(submit).toBeEnabled();
 
     fireEvent.click(submit);
-    expect(logIn).toHaveBeenCalledTimes(1);
-    expect(logIn).toHaveBeenCalledWith('user@test.com', 'longpass');
+
+    const state = store.getState();
+    expect(state.auth.isLoggedIn).toBe(true);
+    expect(state.auth.user.email).toBe('user@test.com');
   });
-// });
 
   test('submitting the form does not reload the page', () => {
-    render(<Login />);
+    const store = mockStore();
+    render(
+      <Provider store={store}>
+        <Login />
+      </Provider>
+    );
+
     const emailInput = screen.getByLabelText(/email/i);
     const pwdInput = screen.getByLabelText(/password/i);
     const submit = screen.getByRole('button', { name: /ok/i });
@@ -101,7 +147,6 @@ describe('Login (Task 1) - Controlled components and state callback', () => {
     fireEvent.change(pwdInput, { target: { value: 'longpass' } });
     expect(submit).toBeEnabled();
 
-    // Click sur submit : JSDOM ne “recharge” pas réellement, on vérifie juste que ça ne jette pas
     fireEvent.click(submit);
   });
 });

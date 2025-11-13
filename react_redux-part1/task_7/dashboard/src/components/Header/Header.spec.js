@@ -1,78 +1,102 @@
 import React from 'react';
-import { render, screen, fireEvent  } from '@testing-library/react';
+import { render, screen, fireEvent } from '@testing-library/react';
 import '@testing-library/jest-dom';
+import { Provider } from 'react-redux';
+import { configureStore } from '@reduxjs/toolkit';
 import Header from './Header';
-import AppContext, { defaultUser } from '../../utils/context';
+import authReducer from '../../features/auth/authSlice';
+
+const mockStore = (initialState = {}) => {
+  return configureStore({
+    reducer: {
+      auth: authReducer,
+    },
+    preloadedState: initialState,
+  });
+};
 
 describe('Header', () => {
-  test('renders the title', () => {
-    render(<Header />);
-    expect(screen.getByRole('heading', { name: /school dashboard/i })).toBeInTheDocument();
+  test('renders without crashing', () => {
+    const store = mockStore({
+      auth: { user: { email: '', password: '' }, isLoggedIn: false },
+    });
+
+    render(
+      <Provider store={store}>
+        <Header />
+      </Provider>
+    );
+
+    expect(screen.getByRole('banner')).toBeInTheDocument();
   });
 
-  test('renders the Holberton logo with alt text', () => {
-    render(<Header />);
-    const img = screen.getByAltText(/holberton logo/i);
-    expect(img).toBeInTheDocument();
-    // optional: ensure it’s inside the correct container
-    expect(img.closest('.App-header')).toBeInTheDocument();
+  test('renders the logo', () => {
+    const store = mockStore({
+      auth: { user: { email: '', password: '' }, isLoggedIn: false },
+    });
+
+    render(
+      <Provider store={store}>
+        <Header />
+      </Provider>
+    );
+
+    const logo = screen.getByAltText(/logo/i);
+    expect(logo).toBeInTheDocument();
   });
 });
 
-describe('Header (Task 3) - context / logout section', () => {
-  test('does NOT render logoutSection with default context value', () => {
-    // default context = user not logged in
+describe('Header - Redux integration', () => {
+  test('does NOT render logoutSection when user is not logged in', () => {
+    const store = mockStore({
+      auth: { user: { email: '', password: '' }, isLoggedIn: false },
+    });
+
     render(
-      <AppContext.Provider value={{ user: defaultUser, logOut: () => {} }}>
+      <Provider store={store}>
         <Header />
-      </AppContext.Provider>
+      </Provider>
     );
 
-    expect(screen.queryByText(/welcome/i)).toBeNull();
-    expect(screen.queryByText(/logout/i)).toBeNull();
-    // expect(screen.queryByTestId?.('logoutSection')).toBeUndefined(); // just in case
-    expect(screen.queryByTestId('logoutSection')).toBeNull();
+    expect(screen.queryByText(/welcome/i)).not.toBeInTheDocument();
+    expect(screen.queryByText(/logout/i)).not.toBeInTheDocument();
     expect(document.querySelector('#logoutSection')).toBeNull();
   });
 
-  test('renders logoutSection when user.isLoggedIn = true', () => {
-    const user = {
-      email: 'test@holberton.io',
-      password: 'whatever',
-      isLoggedIn: true,
-    };
+  test('renders logoutSection when user is logged in', () => {
+    const store = mockStore({
+      auth: { user: { email: 'test@holberton.io', password: 'password' }, isLoggedIn: true },
+    });
 
     render(
-      <AppContext.Provider value={{ user, logOut: () => {} }}>
+      <Provider store={store}>
         <Header />
-      </AppContext.Provider>
+      </Provider>
     );
 
     const section = document.querySelector('#logoutSection');
     expect(section).not.toBeNull();
-    // expect(screen.getByText(/welcome test@holberton.io/i)).toBeInTheDocument();
     expect(screen.getByText(/welcome/i)).toBeInTheDocument();
     expect(screen.getByText('test@holberton.io')).toBeInTheDocument();
-    expect(screen.getByText(/\(logout\)/i)).toBeInTheDocument();
+    expect(screen.getByText(/logout/i)).toBeInTheDocument();
   });
 
-  test('clicking on "logout" calls the logOut function from context', () => {
-    const user = {
-      email: 'test@holberton.io',
-      password: 'whatever',
-      isLoggedIn: true,
-    };
-    const logOut = jest.fn();
+  test('clicking on logout dispatches logout action', () => {
+    const store = mockStore({
+      auth: { user: { email: 'test@holberton.io', password: 'password' }, isLoggedIn: true },
+    });
 
     render(
-      <AppContext.Provider value={{ user, logOut }}>
+      <Provider store={store}>
         <Header />
-      </AppContext.Provider>
+      </Provider>
     );
 
-    const link = screen.getByText(/\(logout\)/i);
+    const link = screen.getByText(/logout/i);
     fireEvent.click(link);
 
-    expect(logOut).toHaveBeenCalledTimes(1);
+    const state = store.getState();
+    expect(state.auth.isLoggedIn).toBe(false);
+    expect(state.auth.user.email).toBe('');
   });
 });

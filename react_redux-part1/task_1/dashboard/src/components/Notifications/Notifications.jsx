@@ -5,8 +5,8 @@ import NotificationItem from '../NotificationItem/NotificationItem';
 import {
   fetchNotifications,
   markNotificationAsRead as markAsRead,
-  handleDisplayDrawer as displayDrawerAction,
-  handleHideDrawer as hideDrawerAction,
+  showDrawer as displayDrawerAction,
+  hideDrawer as hideDrawerAction,
 } from '../../features/notifications/notificationsSlice';
 
 export default function Notifications() {
