@@ -1,51 +1,40 @@
 import coursesReducer, { fetchCourses } from '../courses/coursesSlice';
 import { logout } from '../auth/authSlice';
-import { configureStore } from '@reduxjs/toolkit';
-import axios from 'axios';
-
-jest.mock('axios');
 
 describe('coursesSlice', () => {
   const initialState = {
     courses: [],
   };
 
-  test('should return the initial state by default', () => {
-    expect(coursesReducer(undefined, { type: 'unknown' })).toEqual(initialState);
+  it('should return the correct initial state by default', () => {
+    const state = coursesReducer(undefined, { type: '' });
+    expect(state).toEqual(initialState);
   });
 
-  test('should handle fetchCourses.fulfilled', async () => {
-    const mockCourses = {
+  it('should handle fetchCourses.fulfilled correctly', () => {
+    const mockCourses = [
+      { id: 1, name: 'React Basics' },
+      { id: 2, name: 'Redux Fundamentals' },
+    ];
+
+    const state = coursesReducer(
+      initialState,
+      fetchCourses.fulfilled(mockCourses, '')
+    );
+
+    expect(state.courses.length).toBe(2);
+    expect(state.courses[0].name).toBe('React Basics');
+  });
+
+  it('should reset courses to empty when logout is dispatched', () => {
+    const mockState = {
       courses: [
-        { id: 1, name: 'ES6', credit: 60 },
-        { id: 2, name: 'Webpack', credit: 20 },
-        { id: 3, name: 'React', credit: 40 },
+        { id: 1, name: 'React Basics' },
+        { id: 2, name: 'Redux Fundamentals' },
       ],
     };
 
-    axios.get.mockResolvedValue({ data: mockCourses });
-
-    const store = configureStore({
-      reducer: { courses: coursesReducer },
-    });
-
-    await store.dispatch(fetchCourses());
-    const state = store.getState().courses;
-
-    expect(state.courses).toHaveLength(3);
-    expect(state.courses[0].name).toBe('ES6');
-  });
-
-  test('should reset courses on logout', () => {
-    const state = {
-      courses: [
-        { id: 1, name: 'ES6', credit: 60 },
-        { id: 2, name: 'Webpack', credit: 20 },
-      ],
-    };
-
-    const actual = coursesReducer(state, logout());
-    
-    expect(actual.courses).toEqual([]);
+    const state = coursesReducer(mockState, logout());
+    expect(state).toEqual(initialState);
   });
 });

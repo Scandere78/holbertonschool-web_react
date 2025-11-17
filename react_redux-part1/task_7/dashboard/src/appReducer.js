@@ -1,3 +1,4 @@
+// === appReducer.js ===
 export const APP_ACTIONS = {
   LOGIN: "LOGIN",
   LOGOUT: "LOGOUT",
@@ -38,19 +39,6 @@ export function appReducer(state = initialState, action) {
           password: "",
           isLoggedIn: false,
         },
-        courses: [],
-      };
-
-    case APP_ACTIONS.SET_NOTIFICATIONS:
-      return {
-        ...state,
-        notifications: action.payload,
-      };
-
-    case APP_ACTIONS.SET_COURSES:
-      return {
-        ...state,
-        courses: action.payload,
       };
 
     case APP_ACTIONS.TOGGLE_DRAWER:
@@ -63,8 +51,20 @@ export function appReducer(state = initialState, action) {
       return {
         ...state,
         notifications: state.notifications.filter(
-          (notification) => notification.id !== action.payload
+          (n) => n.id !== action.payload
         ),
+      };
+
+    case APP_ACTIONS.SET_NOTIFICATIONS:
+      return {
+        ...state,
+        notifications: action.payload,
+      };
+
+    case APP_ACTIONS.SET_COURSES:
+      return {
+        ...state,
+        courses: action.payload,
       };
 
     default:

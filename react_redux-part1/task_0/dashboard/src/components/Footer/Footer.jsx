@@ -1,18 +1,35 @@
-import React from 'react';
-import { useSelector } from 'react-redux';
+import React from "react";
+import { getCurrentYear, getFooterCopy } from "../../utils/utils";
 
-export default function Footer() {
-  const isLoggedIn = useSelector((state) => state.auth.isLoggedIn);
-  const year = new Date().getFullYear();
-
+function Footer({ user, logOut }) {
   return (
-    <footer className="App-footer border-t-[3px] border-[var(--main-color)] py-2 text-center italic">
-      <p>Copyright {year} - Holberton School</p>
-      {isLoggedIn && (
+    <footer className="App-footer text-center text-sm border-t-4 border-[var(--main-color)] mt-10 py-4 text-gray-600">
+      <p>
+        Copyright {getCurrentYear()} - {getFooterCopy(true)}
+      </p>
+
+      {/* Display contact / logout based on login status */}
+      {user?.isLoggedIn ? (
         <p>
-          <a href="#">Contact us</a>
+          Welcome {user.email} (
+          <a
+            href="#logout"
+            onClick={(e) => {
+              e.preventDefault();
+              logOut();
+            }}
+          >
+            Logout
+          </a>
+          )
+        </p>
+      ) : (
+        <p>
+          <a href="#contact">Contact us</a>
         </p>
       )}
     </footer>
   );
 }
+
+export default Footer;

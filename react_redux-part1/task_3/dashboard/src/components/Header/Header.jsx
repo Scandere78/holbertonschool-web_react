@@ -1,60 +1,38 @@
-import React from 'react';
-import { useSelector, useDispatch } from 'react-redux';
-import { StyleSheet, css } from 'aphrodite';
-import holbertonLogo from '../../assets/holberton-logo.jpg';
-import { logout } from '../../features/auth/authSlice';
+import React from "react";
+import { useSelector, useDispatch } from "react-redux";
+import { logout } from "../../features/auth/authSlice";
+import holbertonLogo from "../../assets/holberton-logo.jpg";
 
-const styles = StyleSheet.create({
-  header: {
-    display: 'flex',
-    alignItems: 'center',
-    padding: '10px',
-    borderBottom: '3px solid #e0354b',
-  },
-  logo: {
-    height: '200px',
-    marginRight: '20px',
-  },
-  title: {
-    color: '#e0354b',
-    fontSize: '2.5rem',
-    fontWeight: 'bold',
-  },
-  logoutSection: {
-    fontSize: '0.9rem',
-    marginLeft: '20px',
-  },
-});
-
-export default function Header() {
+function Header() {
   const dispatch = useDispatch();
-  const user = useSelector((state) => state.auth.user);
-  const isLoggedIn = useSelector((state) => state.auth.isLoggedIn);
 
-  const handleLogout = (e) => {
-    e.preventDefault();
+  // On lit le state auth via Redux
+  const isLoggedIn = useSelector((state) => state.auth.isLoggedIn);
+  const user = useSelector((state) => state.auth.user);
+
+  // Handle logout: déclenche simplement l'action
+  const handleLogout = () => {
     dispatch(logout());
   };
 
   return (
-    <header className={css(styles.header)}>
-      <img
-        className={css(styles.logo)}
-        src={holbertonLogo}
-        alt="Holberton logo"
-      />
-      <h1 className={css(styles.title)}>School Dashboard</h1>
+    <header className="App-header">
+      <img src={holbertonLogo} className="App-logo" alt="Holberton logo" />
+      <h1>School dashboard</h1>
 
-      {isLoggedIn && (
-        <div id="logoutSection" data-testid="logoutSection" className={css(styles.logoutSection)}>
-          <span>
-            Welcome <strong>{user.email}</strong>{' '}
-          </span>
-          <a href="#logout" onClick={handleLogout}>
-            (logout)
-          </a>
-        </div>
+      {isLoggedIn && user && (
+        <section id="logoutSection">
+          <p>
+            Welcome {user.email} (
+            <a href="#" onClick={handleLogout}>
+              logout
+            </a>
+            )
+          </p>
+        </section>
       )}
     </header>
   );
 }
+
+export default Header;

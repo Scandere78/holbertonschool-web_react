@@ -1,94 +1,97 @@
-import React, { useEffect } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
-import closeIcon from '../../assets/close-button.png';
-import NotificationItem from '../NotificationItem/NotificationItem';
-import {
-  fetchNotifications,
-  markNotificationAsRead as markAsRead,
-  showDrawer as displayDrawerAction,
-  hideDrawer as hideDrawerAction,
-} from '../../features/notifications/notificationsSlice';
+import React, { memo } from "react";
+import PropTypes from "prop-types";
+import closeIcon from "../../assets/close-icon.png";
+import NotificationItem from "../NotificationItem/NotificationItem";
 
-export default function Notifications() {
-  const dispatch = useDispatch();
-  const notifications = useSelector((state) => state.notifications.notifications);
-  const displayDrawer = useSelector((state) => state.notifications.displayDrawer);
-  const loading = useSelector((state) => state.notifications.loading);
-
-  useEffect(() => {
-    dispatch(fetchNotifications());
-  }, [dispatch]);
-
-  const handleMarkAsRead = (id) => {
-    dispatch(markAsRead(id));
+function Notifications({
+  notifications = [],
+  displayDrawer = true,
+  handleDisplayDrawer,
+  handleHideDrawer,
+  markNotificationAsRead,
+}) {
+  // --- Styles ---
+  const borderStyle = {
+    borderColor: "var(--main-color)",
   };
 
-  const onDisplayDrawer = () => {
-    dispatch(displayDrawerAction());
-  };
-
-  const onHideDrawer = () => {
-    dispatch(hideDrawerAction());
-  };
-
-  const shouldBounce = notifications.length > 0 && !displayDrawer;
+  const titleClassName = `text-right pr-8 pt-2 ${
+    notifications.length > 0 && !displayDrawer ? "animate-bounce" : ""
+  }`;
 
   return (
+    <>
       <div
-        className="fixed z-50 text-right"
-        style={{ position: 'fixed', top: '1rem', right: '1rem', left: 'auto' }}
+        className={`${titleClassName} cursor-pointer`}
+        onClick={handleDisplayDrawer}
+        data-testid="menuItem"
       >
-        <div
-          className={`menuItem text-right font-normal text-base text-black ${shouldBounce ? 'animate-bounce' : ''}`}
-          data-testid="notifications-title"
-          role="button"
-          tabIndex={0}
-          onClick={onDisplayDrawer}
-          onKeyDown={(e) => {
-            if (e.key === 'Enter' || e.key === ' ') onDisplayDrawer();
-          }}
-        >
-          Your notifications
-        </div>
-
-        {displayDrawer && (
-          <div
-            className="relative mt-1 inline-block p-2 border border-dotted rounded-none bg-white w-[520px] text-left"
-            style={{ borderColor: 'var(--main-color)' }}
-          >
-            {loading ? (
-              <p className="m-0">Loading notifications...</p>
-            ) : notifications.length === 0 ? (
-              <p className="notifications-empty m-0">No new notification for now</p>
-            ) : (
-              <>
-                <p className="text-base mb-2 m-0">Here is the list of notifications</p>
-
-                <button
-                  aria-label="Close"
-                  className="absolute top-2 right-2"
-                  onClick={onHideDrawer}
-                >
-                  <img src={closeIcon} alt="Close" className="w-3 h-3" />
-                </button>
-
-                <ul className="notifications-list">
-                  {notifications.map((n) => (
-                    <NotificationItem
-                      key={n.id}
-                      id={n.id}
-                      type={n.type}
-                      value={n.value}
-                      html={n.html}
-                      markAsRead={() => handleMarkAsRead(n.id)}
-                      markNotificationAsRead={handleMarkAsRead}
-                    />
-                  ))}
-                </ul>
-              </>
-            )}
-          </div>
-        )}
+        Your notifications
       </div>
-    );
+
+      {displayDrawer && (
+        <div
+          className="border-2 border-dashed bg-white p-6 relative float-right mr-8 mt-2 max-w-4xl"
+          style={borderStyle}
+          data-testid="Notifications"
+        >
+          <button
+            onClick={() => {
+              console.log("Close button has been clicked");
+              handleHideDrawer();
+            }}
+            aria-label="Close"
+            className="absolute cursor-pointer right-3 top-3 bg-transparent border-none p-0"
+          >
+            <img src={closeIcon} alt="close icon" className="w-5 h-5" />
+          </button>
+
+          {notifications.length > 0 ? (
+            <>
+              <p className="font-bold mb-3">
+                Here is the list of notifications
+              </p>
+              <ul className="list-disc pl-6 space-y-1">
+                {notifications.map((notification) => (
+                  <NotificationItem
+                    key={notification.id}
+                    type={notification.type}
+                    value={notification.value}
+                    html={notification.html}
+                    markAsRead={() => markNotificationAsRead(notification.id)} // ✅ utilise bien la prop
+                  />
+                ))}
+              </ul>
+            </>
+          ) : (
+            <p className="text-center">No new notification for now</p>
+          )}
+        </div>
+      )}
+    </>
+  );
 }
+
+Notifications.propTypes = {
+  notifications: PropTypes.arrayOf(
+    PropTypes.shape({
+      id: PropTypes.number.isRequired,
+      type: PropTypes.string.isRequired,
+      value: PropTypes.string,
+      html: PropTypes.shape({ __html: PropTypes.string }),
+    })
+  ).isRequired,
+  displayDrawer: PropTypes.bool.isRequired,
+  handleDisplayDrawer: PropTypes.func.isRequired,
+  handleHideDrawer: PropTypes.func.isRequired,
+  markNotificationAsRead: PropTypes.func.isRequired,
+};
+
+const areEqual = (prevProps, nextProps) => {
+  return (
+    prevProps.notifications.length === nextProps.notifications.length &&
+    prevProps.displayDrawer === nextProps.displayDrawer
+  );
+};
+
+export default memo(Notifications, areEqual);
