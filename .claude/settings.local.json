@@ -44,7 +44,9 @@
       "Bash(then echo \"✓ Task $i: node_modules exists\")",
       "Bash(else echo \"✗ Task $i: node_modules missing\")",
       "Bash(fi)",
-      "Bash(do echo \"=== Building $task ===\" cd \"react_redux-part1/$task/dashboard\")"
+      "Bash(do echo \"=== Building $task ===\" cd \"react_redux-part1/$task/dashboard\")",
+      "Bash(git commit:*)",
+      "Bash(git push)"
     ],
     "deny": [],
     "ask": []
