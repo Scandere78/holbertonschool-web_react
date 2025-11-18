@@ -1,19 +1,24 @@
-import React, { useEffect } from "react";
-import { useSelector, useDispatch } from "react-redux";
-import Notifications from "./components/Notifications/Notifications";
-import Header from "./components/Header/Header";
-import Footer from "./components/Footer/Footer";
-import Login from "./pages/Login/Login";
-import CourseList from "./pages/CourseList/CourseList";
-import BodySectionWithMarginBottom from "./components/BodySectionWithMarginBottom/BodySectionWithMarginBottom";
-import BodySection from "./components/BodySection/BodySection";
+import { useEffect } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
+import { StyleSheet, css } from 'aphrodite';
+import Notifications from './components/Notifications/Notifications';
+import Footer from './components/Footer/Footer';
+import Header from './components/Header/Header';
+import Login from './pages/Login/Login';
+import CourseList from './pages/CourseList/CourseList';
+import BodySectionWithMarginBottom from './components/BodySectionWithMarginBottom/BodySectionWithMarginBottom';
+import BodySection from './components/BodySection/BodySection';
+import { fetchNotifications } from './features/notifications/notificationsSlice';
+import { fetchCourses } from './features/courses/coursesSlice';
 
-import { fetchNotifications } from "./features/notifications/notificationsSlice";
-import { fetchCourses } from "./features/courses/coursesSlice";
+const styles = StyleSheet.create({
+  app: {
+    position: 'relative',
+  },
+});
 
-function App() {
+export default function App() {
   const dispatch = useDispatch();
-
   const isLoggedIn = useSelector((state) => state.auth.isLoggedIn);
 
   useEffect(() => {
@@ -27,26 +32,22 @@ function App() {
   }, [dispatch, isLoggedIn]);
 
   return (
-    <>
+    <div className={css(styles.app)}>
       <Notifications />
       <Header />
-
       {!isLoggedIn ? (
-        <BodySectionWithMarginBottom title="Log in to continue">
+        <BodySectionWithMarginBottom title='Log in to continue'>
           <Login />
         </BodySectionWithMarginBottom>
       ) : (
-        <BodySectionWithMarginBottom title="Course list">
+        <BodySectionWithMarginBottom title='Course list'>
           <CourseList />
         </BodySectionWithMarginBottom>
       )}
-
       <BodySection title="News from the School">
-        <p>Holberton School News goes here</p>
+        <p>Holberton School news goes here</p>
       </BodySection>
       <Footer />
-    </>
+    </div>
   );
 }
-
-export default App;

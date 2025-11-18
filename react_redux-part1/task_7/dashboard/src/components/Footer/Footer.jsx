@@ -1,26 +1,28 @@
-import React from "react";
-import { useSelector } from "react-redux";
-import { getCurrentYear, getFooterCopy } from "../../utils/utils";
+import React from 'react';
+import { useSelector } from 'react-redux';
+import { StyleSheet, css } from 'aphrodite';
 
-function Footer() {
-  // Récupération de l'état auth dans le store Redux
+const styles = StyleSheet.create({
+  footer: {
+    borderTop: '3px solid #e0354b',
+    padding: '10px',
+    textAlign: 'center',
+    fontStyle: 'italic',
+  },
+});
+
+export default function Footer() {
   const isLoggedIn = useSelector((state) => state.auth.isLoggedIn);
-  const user = useSelector((state) => state.auth.user);
+  const year = new Date().getFullYear();
 
   return (
-    <footer className="App-footer text-center text-sm border-t-4 border-[var(--main-color)] mt-10 py-4 text-gray-600">
-      <p>
-        Copyright {getCurrentYear()} - {getFooterCopy(true)}
-      </p>
-
-      {/* Afficher "Contact us" uniquement si l'utilisateur est connecté */}
-      {isLoggedIn && user && (
+    <footer className={css(styles.footer)}>
+      <p>Copyright {year} - Holberton School</p>
+      {isLoggedIn && (
         <p>
-          <a href="#contact">Contact us</a>
+          <a href="#">Contact us</a>
         </p>
       )}
     </footer>
   );
 }
-
-export default Footer;

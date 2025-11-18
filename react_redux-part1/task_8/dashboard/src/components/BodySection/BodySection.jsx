@@ -1,12 +1,18 @@
-import React from "react";
+import React from 'react';
+import PropTypes from 'prop-types';
 
-function BodySection({ title, children }) {
+const BodySection = ({ title, children }) => {
   return (
-    <section className="App-bodysection mt-6">
-      {title && <h2 className="text-xl font-semibold mb-2">{title}</h2>}
+    <div className="bodySection">
+      <h2 className="text-xl font-semibold mb-0">{title}</h2>
       {children}
-    </section>
+    </div>
   );
-}
+};
+
+BodySection.propTypes = {
+  title: PropTypes.string.isRequired,
+  children: PropTypes.node,
+};
 
 export default BodySection;

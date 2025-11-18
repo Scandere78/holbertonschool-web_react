@@ -1,42 +1,28 @@
-import React from "react";
-import { useSelector, useDispatch } from "react-redux";
-import { getCurrentYear, getFooterCopy } from "../../utils/utils";
-import { logout } from "../../features/auth/authSlice";
+import React from 'react';
+import { useSelector } from 'react-redux';
+import { StyleSheet, css } from 'aphrodite';
 
-function Footer() {
-  const dispatch = useDispatch();
-  const { user, isLoggedIn } = useSelector((state) => state.auth);
+const styles = StyleSheet.create({
+  footer: {
+    borderTop: '3px solid #e0354b',
+    padding: '10px',
+    textAlign: 'center',
+    fontStyle: 'italic',
+  },
+});
 
-  const handleLogout = (e) => {
-    e.preventDefault();
-    dispatch(logout());
-  };
+export default function Footer() {
+  const isLoggedIn = useSelector((state) => state.auth.isLoggedIn);
+  const year = new Date().getFullYear();
 
   return (
-    <footer className="App-footer text-center text-sm border-t-4 border-[var(--main-color)] mt-10 py-4 text-gray-600">
-      <p>
-        Copyright {getCurrentYear()} - {getFooterCopy(true)}
-      </p>
-
-      {isLoggedIn && user ? (
+    <footer className={css(styles.footer)}>
+      <p>Copyright {year} - Holberton School</p>
+      {isLoggedIn && (
         <p>
-          Welcome {user.email} (
-          <a
-            href="#logout"
-            onClick={handleLogout}
-            style={{ color: "blue", cursor: "pointer" }}
-          >
-            logout
-          </a>
-          )
-        </p>
-      ) : (
-        <p>
-          <a href="#contact">Contact us</a>
+          <a href="#">Contact us</a>
         </p>
       )}
     </footer>
   );
 }
-
-export default Footer;

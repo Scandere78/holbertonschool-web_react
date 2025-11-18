@@ -1,9 +1,13 @@
 import React from 'react';
-import { render, cleanup } from '@testing-library/react';
+import { render, screen, cleanup } from '@testing-library/react';
 import WithLogging from './WithLogging';
 
-afterEach(cleanup);
+afterEach(() => {
+  cleanup();
+  jest.restoreAllMocks();
+});
 
+// Mock component donné par l’énoncé
 class MockApp extends React.Component {
   render() {
     return <h1>Hello from Mock App Component</h1>;
@@ -11,20 +15,31 @@ class MockApp extends React.Component {
 }
 
 describe('WithLogging HOC', () => {
-  it('renders MockApp component with heading', () => {
-    const WrappedComponent = WithLogging(MockApp);
-    const { getByText } = render(<WrappedComponent />);
-    const heading = getByText(/hello from mock app component/i);
-    expect(heading).toBeInTheDocument();
+  test('renders heading from the wrapped component', () => {
+    const Wrapped = WithLogging(MockApp);
+    render(<Wrapped />);
+
+    expect(
+      screen.getByRole('heading', { level: 1, name: /Hello from Mock App Component/i })
+    ).toBeInTheDocument();
   });
 
-  it('logs to console on mount and unmount', () => {
-    const consoleLogSpy = jest.spyOn(console, 'log');
-    const WrappedComponent = WithLogging(MockApp);
-    const { unmount } = render(<WrappedComponent />);
-    expect(consoleLogSpy).toHaveBeenCalledWith('Component MockApp is mounted');
+  test('logs on mount and unmount', () => {
+    const Wrapped = WithLogging(MockApp);
+    const logSpy = jest.spyOn(console, 'log').mockImplementation(() => {});
+
+    const { unmount } = render(<Wrapped />);
+    // Avec StrictMode en dev, ces logs peuvent apparaître 2 fois : on vérifie le contenu, pas le nombre précis.
+    expect(logSpy).toHaveBeenCalledWith('Component MockApp is mounted');
+
     unmount();
-    expect(consoleLogSpy).toHaveBeenCalledWith('Component MockApp is going to unmount');
-    consoleLogSpy.mockRestore();
+    expect(logSpy).toHaveBeenCalledWith('Component MockApp is going to unmount');
+
+    logSpy.mockRestore();
+  });
+
+  test('has the proper displayName', () => {
+    const Wrapped = WithLogging(MockApp);
+    expect(Wrapped.displayName).toBe('WithLogging(MockApp)');
   });
 });

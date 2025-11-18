@@ -44,10 +44,7 @@
       "Bash(then echo \"✓ Task $i: node_modules exists\")",
       "Bash(else echo \"✗ Task $i: node_modules missing\")",
       "Bash(fi)",
-      "Bash(do echo \"=== Building $task ===\" cd \"react_redux-part1/$task/dashboard\")",
-      "Bash(git remote add:*)",
-      "Bash(git fetch:*)",
-      "Bash(git commit -m \"$(cat <<''EOF''\nSync react_redux-part1 with SDINAHET repository\n\nRetrieve all code from https://github.com/SDINAHET/holbertonschool-web_react/tree/main/react_redux-part1\n- Add all tasks (task_0 to task_7)\n- Add old_task_6_hooks backup\n- Include all build files, dependencies, and assets\n- Complete Redux implementation with slices and store configuration\n\n🤖 Generated with [Claude Code](https://claude.com/claude-code)\n\nCo-Authored-By: Claude <noreply@anthropic.com>\nEOF\n)\")"
+      "Bash(do echo \"=== Building $task ===\" cd \"react_redux-part1/$task/dashboard\")"
     ],
     "deny": [],
     "ask": []

@@ -1,82 +1,120 @@
-import React, { memo } from "react";
-import { useSelector, useDispatch } from "react-redux";
-import closeIcon from "../../assets/close-icon.png";
-import NotificationItem from "../NotificationItem/NotificationItem";
+import React, { useEffect } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
+import { StyleSheet, css } from 'aphrodite';
+import closeIcon from '../../assets/close-button.png';
+import NotificationItem from '../NotificationItem/NotificationItem';
 import {
+  fetchNotifications,
+  markNotificationAsRead,
   showDrawer,
   hideDrawer,
-  markNotificationAsRead,
-} from "../../features/notifications/notificationsSlice";
+} from '../../features/notifications/notificationsSlice';
 
-function Notifications() {
+const styles = StyleSheet.create({
+  notifications: {
+    position: 'fixed',
+    top: '1rem',
+    right: '1rem',
+    zIndex: 50,
+  },
+  menuItem: {
+    textAlign: 'right',
+    cursor: 'pointer',
+    ':hover': {
+      textDecoration: 'underline',
+    },
+  },
+  drawer: {
+    position: 'relative',
+    marginTop: '0.5rem',
+    display: 'inline-block',
+    padding: '10px',
+    border: '2px dotted #e0354b',
+    backgroundColor: 'white',
+    width: '520px',
+    textAlign: 'left',
+  },
+  closeButton: {
+    position: 'absolute',
+    top: '10px',
+    right: '10px',
+    background: 'none',
+    border: 'none',
+    cursor: 'pointer',
+  },
+});
+
+export default function Notifications() {
   const dispatch = useDispatch();
+  const notifications = useSelector((state) => state.notifications.notifications);
+  const displayDrawer = useSelector((state) => state.notifications.displayDrawer);
 
-  const { notifications, displayDrawer } = useSelector(
-    (state) => state.notifications
-  );
+  useEffect(() => {
+    dispatch(fetchNotifications());
+  }, [dispatch]);
 
-  const handleDisplayDrawer = () => dispatch(showDrawer());
-  const handleHideDrawer = () => dispatch(hideDrawer());
-  const handleMarkAsRead = (id) => dispatch(markNotificationAsRead(id));
-
-  // --- Styles ---
-  const borderStyle = {
-    borderColor: "var(--main-color)",
+  const handleMarkAsRead = (id) => {
+    dispatch(markNotificationAsRead(id));
   };
 
-  const titleClassName = `text-right pr-8 pt-2 ${
-    notifications.length > 0 && !displayDrawer ? "animate-bounce" : ""
-  }`;
+  const handleDisplayDrawer = () => {
+    dispatch(showDrawer());
+  };
+
+  const handleHideDrawer = () => {
+    dispatch(hideDrawer());
+  };
+
+  const shouldBounce = notifications.length > 0 && !displayDrawer;
 
   return (
-    <>
+    <div className={css(styles.notifications)}>
       <div
-        className={`${titleClassName} cursor-pointer`}
+        className={css(styles.menuItem)}
+        data-testid="notifications-title"
+        role="button"
+        tabIndex={0}
         onClick={handleDisplayDrawer}
-        data-testid="menuItem"
+        onKeyDown={(e) => {
+          if (e.key === 'Enter' || e.key === ' ') handleDisplayDrawer();
+        }}
       >
         Your notifications
       </div>
 
       {displayDrawer && (
-        <div
-          className="border-2 border-dashed bg-white p-6 relative float-right mr-8 mt-2 max-w-4xl"
-          style={borderStyle}
-          data-testid="Notifications"
-        >
-          <button
-            onClick={handleHideDrawer}
-            aria-label="Close"
-            className="absolute cursor-pointer right-3 top-3 bg-transparent border-none p-0"
-          >
-            <img src={closeIcon} alt="close icon" className="w-5 h-5" />
-          </button>
-
-          {notifications.length > 0 ? (
+        <div className={css(styles.drawer)}>
+          {notifications.length === 0 ? (
+            <p>No new notification for now</p>
+          ) : (
             <>
-              <p className="font-bold mb-3">
-                Here is the list of notifications
-              </p>
-              <ul className="list-disc pl-6 space-y-1">
-                {notifications.map((notification) => (
+              <p>Here is the list of notifications</p>
+
+              <button
+                aria-label="Close"
+                className={css(styles.closeButton)}
+                onClick={handleHideDrawer}
+              >
+                <img src={closeIcon} alt="Close" style={{ width: '12px', height: '12px' }} />
+              </button>
+
+              <ul>
+                {notifications.map((n) => (
                   <NotificationItem
-                    key={notification.id}
-                    type={notification.type}
-                    value={notification.value}
-                    html={notification.html}
-                    markAsRead={() => handleMarkAsRead(notification.id)}
-                    read={notification.read}
+                    key={n.id}
+                    id={n.id}
+                    type={n.type}
+                    value={n.value}
+                    html={n.html}
+                    markAsRead={() => handleMarkAsRead(n.id)}
+                    markNotificationAsRead={handleMarkAsRead}
                   />
                 ))}
               </ul>
             </>
-          ) : (
-            <p className="text-center">No new notification for now</p>
           )}
         </div>
       )}
-    </>
+    </div>
   );
 }
-
-export default memo(Notifications);

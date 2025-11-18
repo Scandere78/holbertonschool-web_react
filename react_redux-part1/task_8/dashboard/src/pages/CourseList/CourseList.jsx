@@ -1,43 +1,60 @@
-import React from "react";
-import { useSelector } from "react-redux";
-import WithLogging from "../../components/HOC/WithLogging";
+import React, { useEffect } from "react";
+import { useSelector, useDispatch } from "react-redux";
 import CourseListRow from "./CourseListRow/CourseListRow";
+import WithLogging from "../../components/HOC/WithLogging";
+import { fetchCourses } from "../../features/courses/coursesSlice";
+import { StyleSheet, css } from "aphrodite";
+
+const styles = StyleSheet.create({
+  courseList: {
+    width: '100%',
+    display: 'flex',
+    justifyContent: 'center',
+    margin: '2rem 0',
+  },
+  table: {
+    width: '80%',
+    borderCollapse: 'collapse',
+  },
+});
 
 function CourseList() {
-  const courses = useSelector((state) => state.courses.courses || []);
+  const dispatch = useDispatch();
+  const courses = useSelector((state) => state.courses.courses);
+
+  useEffect(() => {
+    dispatch(fetchCourses());
+  }, [dispatch]);
 
   return (
-    <div className="mx-auto my-32 w-[80%] md:w-[85%] lg:w-[90%]">
-      {courses.length > 0 ? (
-        <table id="CourseList" className="w-full border-collapse">
-          <thead>
-            <CourseListRow textFirstCell="Available courses" isHeader={true} />
-            <CourseListRow
-              textFirstCell="Course name"
-              textSecondCell="Credit"
-              isHeader={true}
-            />
-          </thead>
-          <tbody>
-            {courses.map((course) => (
+    <div className={css(styles.courseList)}>
+      <table id="CourseList" className={css(styles.table)}>
+        {courses.length > 0 ? (
+          <>
+            <thead>
+              <CourseListRow isHeader={true} textFirstCell="Available courses" />
               <CourseListRow
-                key={course.id}
-                textFirstCell={course.name}
-                textSecondCell={course.credit}
+                isHeader={true}
+                textFirstCell="Course name"
+                textSecondCell="Credit"
               />
-            ))}
+            </thead>
+            <tbody>
+              {courses.map((c) => (
+                <CourseListRow
+                  key={c.id}
+                  textFirstCell={c.name}
+                  textSecondCell={String(c.credit)}
+                />
+              ))}
+            </tbody>
+          </>
+        ) : (
+          <tbody>
+            <CourseListRow isHeader={true} textFirstCell="No course available yet" />
           </tbody>
-        </table>
-      ) : (
-        <table id="CourseList" className="w-full border-collapse">
-          <thead>
-            <CourseListRow
-              isHeader={true}
-              textFirstCell="No course available yet"
-            />
-          </thead>
-        </table>
-      )}
+        )}
+      </table>
     </div>
   );
 }
