@@ -1,14 +1,13 @@
 import React from 'react';
-import { useSelector } from 'react-redux';
+import PropTypes from 'prop-types';
 
-export default function Footer() {
-  const isLoggedIn = useSelector((state) => state.auth.isLoggedIn);
+export default function Footer({ user }) {
   const year = new Date().getFullYear();
 
   return (
     <footer className="App-footer border-t-[3px] border-[var(--main-color)] py-2 text-center italic">
       <p>Copyright {year} - Holberton School</p>
-      {isLoggedIn && (
+      {user.isLoggedIn && (
         <p>
           <a href="#">Contact us</a>
         </p>
@@ -16,3 +15,11 @@ export default function Footer() {
     </footer>
   );
 }
+
+Footer.propTypes = {
+  user: PropTypes.shape({
+    email: PropTypes.string,
+    password: PropTypes.string,
+    isLoggedIn: PropTypes.bool,
+  }),
+};

@@ -1,11 +1,9 @@
-// task_1/dashboard/src/Login/Login.jsx
+// task_0/dashboard/src/Login/Login.jsx
 import React, { useState } from 'react';
-import { useDispatch } from 'react-redux';
+import PropTypes from 'prop-types';
 import WithLogging from '../../components/HOC/WithLogging';
-import { login } from '../../features/auth/authSlice';
 
-function Login() {
-  const dispatch = useDispatch();
+function Login({ logIn }) {
   // états demandés
   const [enableSubmit, setEnableSubmit] = useState(false);
   const [formData, setFormData] = useState({ email: '', password: '' });
@@ -74,7 +72,7 @@ function Login() {
 
   const handleLoginSubmit = (e) => {
     e.preventDefault(); // toujours empêcher le submit par défaut
-    dispatch(login({ email: formData.email, password: formData.password }));
+    logIn(formData.email, formData.password);
   };
 
   // --- JSX : même structure et classes que la version classe ---
@@ -124,5 +122,9 @@ function Login() {
     </div>
   );
 }
+
+Login.propTypes = {
+  logIn: PropTypes.func,
+};
 
 export default WithLogging(Login);

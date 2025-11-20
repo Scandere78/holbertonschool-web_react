@@ -1,16 +1,11 @@
 import React from 'react';
-import { useSelector, useDispatch } from 'react-redux';
+import PropTypes from 'prop-types';
 import holbertonLogo from '../../assets/holberton-logo.jpg';
-import { logout } from '../../features/auth/authSlice';
 
-export default function Header() {
-  const dispatch = useDispatch();
-  const user = useSelector((state) => state.auth.user);
-  const isLoggedIn = useSelector((state) => state.auth.isLoggedIn);
-
+export default function Header({ user, logOut }) {
   const handleLogout = (e) => {
     e.preventDefault();
-    dispatch(logout());
+    logOut();
   };
 
   return (
@@ -24,7 +19,7 @@ export default function Header() {
         School Dashboard
       </h1>
 
-      {isLoggedIn && (
+      {user.isLoggedIn && (
         <div id="logoutSection" data-testid="logoutSection" className="text-sm mt-2 ml-3">
           <span>
             Welcome <strong>{user.email}</strong>{' '}
@@ -37,3 +32,12 @@ export default function Header() {
     </header>
   );
 }
+
+Header.propTypes = {
+  user: PropTypes.shape({
+    email: PropTypes.string,
+    password: PropTypes.string,
+    isLoggedIn: PropTypes.bool,
+  }),
+  logOut: PropTypes.func,
+};

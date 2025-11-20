@@ -1,17 +1,9 @@
-import React, { useEffect } from "react";
-import { useSelector, useDispatch } from "react-redux";
+import React from "react";
+import PropTypes from "prop-types";
 import CourseListRow from "./CourseListRow/CourseListRow";
 import WithLogging from "../../components/HOC/WithLogging";
-import { fetchCourses } from "../../features/courses/coursesSlice";
 
-function CourseList() {
-  const dispatch = useDispatch();
-  const courses = useSelector((state) => state.courses.courses);
-  const loading = useSelector((state) => state.courses.loading);
-
-  useEffect(() => {
-    dispatch(fetchCourses());
-  }, [dispatch]);
+function CourseList({ courses }) {
   return (
     // Wrapper externe: occupe toute la largeur et centre le contenu
     <div className="w-full flex justify-center my-8">
@@ -49,5 +41,19 @@ function CourseList() {
     </div>
   );
 }
+
+CourseList.propTypes = {
+  courses: PropTypes.arrayOf(
+    PropTypes.shape({
+      id: PropTypes.number,
+      name: PropTypes.string,
+      credit: PropTypes.number,
+    })
+  ),
+};
+
+CourseList.defaultProps = {
+  courses: [],
+};
 
 export default WithLogging(CourseList);
