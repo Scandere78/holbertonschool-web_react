@@ -13,7 +13,7 @@ describe('Header', () => {
     render(<Header />);
     const img = screen.getByAltText(/holberton logo/i);
     expect(img).toBeInTheDocument();
-    // optional: ensure it's inside the correct container
+    // optional: ensure it’s inside the correct container
     expect(img.closest('.App-header')).toBeInTheDocument();
   });
 });

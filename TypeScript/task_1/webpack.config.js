@@ -1,4 +1,3 @@
-
 const path = require("path");
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
@@ -24,6 +23,11 @@ module.exports = {
   devServer: {
     contentBase: "./dist"
   },
+//   devServer: {
+//     static: "./dist",
+//     port: 8080, // You can change this if needed
+//     open: true // Automatically opens the browser
+// },
   plugins: [
     new ForkTsCheckerWebpackPlugin(),
     new CleanWebpackPlugin(),

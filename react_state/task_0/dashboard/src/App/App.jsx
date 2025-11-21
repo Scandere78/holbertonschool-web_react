@@ -1,72 +1,119 @@
 // src/App/App.jsx
-import React, { Fragment } from "react";
-import PropTypes from "prop-types";
-import "./App.css";
-import Notifications from "../Notifications/Notifications";
-import Header from "../Header/Header";
-import Login from "../Login/Login";
-import Footer from "../Footer/Footer";
-import CourseList from "../CourseList/CourseList";
-import BodySectionWithMarginBottom from "../BodySection/BodySectionWithMarginBottom";
-import BodySection from "../BodySection/BodySection";
+// import React from 'react';
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 
-class App extends React.Component {
+import Notifications from '../Notifications/Notifications';
+import Header from '../Header/Header';
+import Footer from '../Footer/Footer';
+import Login from '../Login/Login';
+import CourseList from '../CourseList/CourseList';
+import { getLatestNotification } from '../utils/utils';
+
+import BodySection from '../BodySection/BodySection';
+import BodySectionWithMarginBottom from '../BodySection/BodySectionWithMarginBottom';
+
+const defaultNotifications = [
+  { id: 1, type: 'default', value: 'New course available' },
+  { id: 2, type: 'urgent', value: 'New resume available' },
+  { id: 3, type: 'urgent', html: { __html: getLatestNotification() } },
+];
+
+// const defaultNotifications = [];
+
+const defaultCourses = [
+  { id: 1, name: 'ES6', credit: 60 },
+  { id: 2, name: 'Webpack', credit: 20 },
+  { id: 3, name: 'React', credit: 40 },
+];
+
+// const defaultCourses = [];
+
+// class App extends React.Component {
+class App extends Component {
   static propTypes = {
-    logOut: PropTypes.func,
     isLoggedIn: PropTypes.bool,
+    courses: PropTypes.arrayOf(
+      PropTypes.shape({
+        id: PropTypes.number.isRequired,
+        name: PropTypes.string.isRequired,
+        credit: PropTypes.number.isRequired,
+      })
+    ),
+    logOut: PropTypes.func,
   };
 
   static defaultProps = {
-    logOut: () => {},
     isLoggedIn: false,
+    courses: defaultCourses,
+    logOut: () => {},
   };
 
-  constructor(props) {
-    super(props);
-    this.listCourses = [];
-  }
+  // --- Task 0: local state for notifications ---
+  state = {
+    displayDrawer: false,
+  };
 
-  componentDidMount() {
-    document.addEventListener("keydown", this.handleKeyDown);
-  }
+  handleDisplayDrawer = () => {
+    this.setState({ displayDrawer: true });
+  };
 
-  componentWillUnmount() {
-    document.removeEventListener("keydown", this.handleKeyDown);
-  }
+  handleHideDrawer = () => {
+    this.setState({ displayDrawer: false });
+  };
 
-  handleKeyDown = (event) => {
-    if (event.ctrlKey && event.key === "h") {
-      alert("Logging you out");
+  handleKeyDown = (e) => {
+    // Safeguard keys access & accept both 'h' and 'H'
+    const key = e && typeof e.key === 'string' ? e.key : '';
+    if (e?.ctrlKey && (key === 'h' || key === 'H')) {
+      window.alert('Logging you out');
       this.props.logOut();
     }
   };
 
+  componentDidMount() {
+    document.addEventListener('keydown', this.handleKeyDown);
+  }
+
+  componentWillUnmount() {
+    document.removeEventListener('keydown', this.handleKeyDown);
+  }
+
   render() {
-    const { isLoggedIn } = this.props;
+    const { isLoggedIn, courses } = this.props;
+    const { displayDrawer } = this.state;
 
     return (
-      <Fragment>
-        <div className="root-notifications">
-          <Notifications />
+      <>
+        <Notifications
+          displayDrawer={displayDrawer}
+          notifications={defaultNotifications}
+          handleDisplayDrawer={this.handleDisplayDrawer}
+          handleHideDrawer={this.handleHideDrawer}
+        />
+        <div className="App">
+          <Header />
+
+          <main className="App-body">
+            {!isLoggedIn ? (
+              <BodySectionWithMarginBottom title="Log in to continue">
+                <Login />
+              </BodySectionWithMarginBottom>
+            ) : (
+              <BodySectionWithMarginBottom title="Course list">
+                <CourseList courses={courses} />
+              </BodySectionWithMarginBottom>
+            )}
+
+            {/* Bloc d’actualité demandé */}
+            <BodySection title="News from the School">
+              <p>Holberton School News goes here</p>
+            </BodySection>
+          </main>
+
+          <Footer />
         </div>
-        <Header />
-
-        {isLoggedIn ? (
-          <BodySectionWithMarginBottom title="Course list">
-            <CourseList courses={this.listCourses} />
-          </BodySectionWithMarginBottom>
-        ) : (
-          <BodySectionWithMarginBottom title="Log in to continue">
-            <Login />
-          </BodySectionWithMarginBottom>
-        )}
-
-        <BodySection title="News from the School">
-          <p>Holberton School News goes here</p>
-        </BodySection>
-
-        <Footer />
-      </Fragment>
+      </>
     );
   }
 }

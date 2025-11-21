@@ -11,6 +11,6 @@ describe('Footer', () => {
     const p = screen.getByText(/copyright/i);
     expect(p).toBeInTheDocument();
     expect(p).toHaveTextContent(year);
-    // Don't over-specify getFooterCopy(false); we just ensure visible text is correct
+    // Don’t over-specify getFooterCopy(false); we just ensure visible text is correct
   });
 });

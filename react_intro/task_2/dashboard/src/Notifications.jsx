@@ -1,37 +1,54 @@
+// react_intro/task_1/dashboard/src/Notifications.jsx
 import React from 'react';
 import './Notifications.css';
-import closeIcon from './assets/close-icon.png';
+import closeIcon from './assets/close-button.png';
+// Notifications.jsx
+// import closeIcon from './assets/close-icon.png'; // <-- nom exact
 import { getLatestNotification } from './utils';
 
-function Notifications() {
-  const handleCloseClick = () => {
+// export default function Notifications() {
+//   return (
+//     <div className="notification-items">
+//       <p>Here is the list of notifications</p>
+//     </div>
+//   );
+// }
+
+export default function Notifications() {
+  const latest = getLatestNotification();
+  const latestHtml = typeof latest === 'string' ? { __html: latest } : latest;
+
+  const handleClose = () => {
+    // eslint-disable-next-line no-console
     console.log('Close button has been clicked');
   };
 
   return (
-    <div className="notification-items">
+    <div className="notification-items" style={{ position: 'relative' }}>
       <button
+        aria-label="Close"
+        onClick={handleClose}
         style={{
           position: 'absolute',
-          top: '10px',
-          right: '10px',
+          top: 6,
+          right: 8,
           background: 'transparent',
           border: 'none',
-          cursor: 'pointer'
+          cursor: 'pointer',
+          padding: 4,
+          lineHeight: 0
         }}
-        aria-label="Close"
-        onClick={handleCloseClick}
       >
-        <img src={closeIcon} alt="close" />
+        <img src={closeIcon} alt="close" style={{ width: 12, height: 12 }} />
       </button>
+
       <p>Here is the list of notifications</p>
+
       <ul>
         <li data-priority="default">New course available</li>
         <li data-priority="urgent">New resume available</li>
-        <li dangerouslySetInnerHTML={{ __html: getLatestNotification() }}></li>
+        <li data-priority="urgent" dangerouslySetInnerHTML={latestHtml} />
       </ul>
     </div>
   );
 }
-
-export default Notifications;

@@ -1,25 +1,35 @@
-import React from 'react';
-import PropTypes from 'prop-types';
+import React from "react";
+import { getCurrentYear, getFooterCopy } from "../../utils/utils";
 
-export default function Footer({ user }) {
-  const year = new Date().getFullYear();
-
+function Footer({ user, logOut }) {
   return (
-    <footer className="App-footer border-t-[3px] border-[var(--main-color)] py-2 text-center italic">
-      <p>Copyright {year} - Holberton School</p>
-      {user.isLoggedIn && (
+    <footer className="App-footer text-center text-sm border-t-4 border-[var(--main-color)] mt-10 py-4 text-gray-600">
+      <p>
+        Copyright {getCurrentYear()} - {getFooterCopy(true)}
+      </p>
+
+      {/* Display contact / logout based on login status */}
+      {user?.isLoggedIn ? (
         <p>
-          <a href="#">Contact us</a>
+          Welcome {user.email} (
+          <a
+            href="#logout"
+            onClick={(e) => {
+              e.preventDefault();
+              logOut();
+            }}
+          >
+            Logout
+          </a>
+          )
+        </p>
+      ) : (
+        <p>
+          <a href="#contact">Contact us</a>
         </p>
       )}
     </footer>
   );
 }
 
-Footer.propTypes = {
-  user: PropTypes.shape({
-    email: PropTypes.string,
-    password: PropTypes.string,
-    isLoggedIn: PropTypes.bool,
-  }),
-};
+export default Footer;

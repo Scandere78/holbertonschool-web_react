@@ -1,34 +1,51 @@
 import React from 'react';
 import './Notifications.css';
-import NotificationItem from './NotificationItem';
+// import closeIcon from "./assets/close-icon.png";
 import closeIcon from '../assets/close-button.png';
-import { getLatestNotification } from '../utils/utils';
+// import closeButton from "./assets/close-button.png";
+// import { getLatestNotification } from './utils';
+import { getLatestNotification } from '../utils/utils.js';
+// import { getFullYear, getFooterCopy, getLatestNotification } from '../utils/utils.js';
 
-export default function Notifications({ notifications = [] }) {
-  const listToRender = (notifications && notifications.length)
-    ? notifications
-    : [
-        { id: 1, type: 'default', value: 'New course available' },
-        { id: 2, type: 'urgent',  value: 'New resume available' },
-        { id: 3, type: 'urgent',  html: { __html: getLatestNotification() } },
-      ];
-
+export default function Notifications() {
   return (
     <div className="Notifications" style={{ position: 'relative' }}>
+      {/* Titre exact */}
       <p>Here is the list of notifications</p>
-      <ul>
-        {listToRender.map(({ id, type, value, html }) => (
-          <NotificationItem key={id} type={type} value={value} html={html} />
-        ))}
-      </ul>
 
-      {/* ⚠️ le onClick DOIT être sur le <button>, pas sur l’<img> */}
+      {/* Liste des notifications */}
+      <ul>
+        <li data-notification-type="default">New course available</li>
+        <li data-notification-type="urgent">New resume available</li>
+        <li
+          data-notification-type="urgent"
+          dangerouslySetInnerHTML={{ __html: getLatestNotification() }}
+        />
+      </ul>
+      {/* <ul>
+        <li data-priority="default">New course available</li>
+        <li data-priority="urgent">New resume available</li>
+        <li
+          data-priority="urgent"
+          dangerouslySetInnerHTML={{ __html: getLatestNotification() }}
+        ></li>
+      </ul> */}
+
+      {/* Bouton Close */}
       <button
-        onClick={() => console.log('Close button has been clicked')}
         aria-label="Close"
-        style={{ position: 'absolute', top: 10, right: 10, background: 'none', cursor: 'pointer' }}
+        onClick={() => console.log('Close button has been clicked')}
+        style={{
+          position: 'absolute',
+          top: '10px',
+          right: '10px',
+          background: 'none',
+          border: 'none',
+          cursor: 'pointer'
+        }}
       >
-        <img src={closeIcon} alt="close" style={{ width: 10, height: 10 }} />
+        {/* <img src={closeIcon} alt="close" style={{ width: '10px', height: '10px' }} /> */}
+        <img src={closeIcon} alt="close" style={{ width: '10px', height: '10px' }} />
       </button>
     </div>
   );

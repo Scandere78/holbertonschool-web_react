@@ -1,42 +1,68 @@
+// task_2/dashboard/src/Notifications/NotificationItem.jsx
 import React, { memo } from 'react';
 import PropTypes from 'prop-types';
 
-const NotificationItem = memo(function NotificationItem({ type, value, html, markAsRead, id }) {
-  const handleClick = () => {
-    markAsRead(id);
+function NotificationItem({
+  id,
+  type = 'default',
+  value,
+  html,
+  markAsRead,
+  markNotificationAsRead,
+}) {
+  const color =
+    type === 'urgent'
+      ? 'var(--urgent-notification-item)'
+      : 'var(--default-notification-item)';
+
+  const onClick = () => {
+    if (typeof markNotificationAsRead === 'function') {
+      markNotificationAsRead(id);
+    } else if (typeof markAsRead === 'function') {
+      markAsRead(id);
+    } else {
+      // fallback (comportement historique)
+      // eslint-disable-next-line no-console
+      console.log(`Notification ${id} has been marked as read`);
+    }
   };
 
-  if (html) {
-    return (
-      <li
-        data-priority={type}
-        dangerouslySetInnerHTML={html}
-        onClick={handleClick}
-      />
-    );
-  }
-
-  return (
-    <li data-priority={type} onClick={handleClick}>
+  return html ? (
+    <li
+      data-notification-type={type}
+      style={{ color }}
+      onClick={onClick}
+      dangerouslySetInnerHTML={html}
+    />
+  ) : (
+    <li data-notification-type={type} style={{ color }} onClick={onClick}>
       {value}
     </li>
   );
-});
+}
 
 NotificationItem.propTypes = {
-  type: PropTypes.string.isRequired,
+  id: PropTypes.oneOfType([PropTypes.number, PropTypes.string]).isRequired,
+  type: PropTypes.string,
   value: PropTypes.string,
-  html: PropTypes.shape({
-    __html: PropTypes.string,
-  }),
+  html: PropTypes.shape({ __html: PropTypes.string }),
   markAsRead: PropTypes.func,
-  id: PropTypes.number,
+  markNotificationAsRead: PropTypes.func,
 };
 
-NotificationItem.defaultProps = {
-  type: 'default',
-  markAsRead: () => {},
-  id: 0,
+// Mémoïsation façon PureComponent :
+// on ignore les changements d'identité des handlers,
+// on compare seulement les données utiles à l'affichage.
+const areEqual = (prev, next) => {
+  if (prev.id !== next.id) return false;
+  if (prev.type !== next.type) return false;
+  if (prev.value !== next.value) return false;
+
+  const prevHtml = prev.html?.__html ?? null;
+  const nextHtml = next.html?.__html ?? null;
+  if (prevHtml !== nextHtml) return false;
+
+  return true; // pas de re-render sinon
 };
 
-export default NotificationItem;
+export default memo(NotificationItem, areEqual);

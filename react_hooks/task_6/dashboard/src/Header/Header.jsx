@@ -1,32 +1,38 @@
-import React from 'react';
-import PropTypes from 'prop-types';
-import logo from '../assets/holberton-logo.jpg';
+import React, { useContext } from 'react';
+import holbertonLogo from '../assets/holberton-logo.jpg';
+import AppContext, { defaultUser } from '../Context/context';
 
-function Header({ user, logOut }) {
+export default function Header() {
+  const ctx = useContext(AppContext) || {};
+  const user = ctx.user ?? defaultUser;
+  const logOut = typeof ctx.logOut === 'function' ? ctx.logOut : () => {};
+
+  const handleLogout = (e) => {
+    e.preventDefault();
+    logOut();
+  };
+
   return (
-    <header className="App-header">
-      <img src={logo} alt="Holberton Logo" />
-      <h1>School dashboard</h1>
+    <header className="App-header flex items-center p-[10px]">
+      <img
+        className="App-logo h-[200px] mr-5"
+        src={holbertonLogo}
+        alt="Holberton logo"
+      />
+      <h1 className="text-[var(--main-color)] text-4xl font-bold">
+        School Dashboard
+      </h1>
+
       {user.isLoggedIn && (
-        <section id="logoutSection" className="logout-section">
-          Welcome {user.email} (<a href="#" onClick={(e) => { e.preventDefault(); logOut(); }}>logout</a>)
-        </section>
+        <div id="logoutSection" data-testid="logoutSection" className="text-sm mt-2 ml-3">
+          <span>
+            Welcome <strong>{user.email}</strong>{' '}
+          </span>
+          <a href="#logout" onClick={handleLogout} className="text-blue-500 underline">
+            (logout)
+          </a>
+        </div>
       )}
     </header>
   );
 }
-
-Header.propTypes = {
-  user: PropTypes.shape({
-    email: PropTypes.string,
-    isLoggedIn: PropTypes.bool,
-  }),
-  logOut: PropTypes.func,
-};
-
-Header.defaultProps = {
-  user: { email: '', isLoggedIn: false },
-  logOut: () => {},
-};
-
-export default Header;

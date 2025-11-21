@@ -1,13 +1,18 @@
-import React from 'react';
-import PropTypes from 'prop-types';
-import { getCurrentYear, getFooterCopy } from '../utils/utils';
+// import React from 'react';
+import React, { useContext } from 'react';
+import AppContext, { defaultUser } from '../Context/context';
 
-function Footer({ user }) {
+export default function Footer() {
+  const ctx = useContext(AppContext) || {};
+  // const { user } = useContext(AppContext);
+  // const { user } = context;
+  // const year = new Date().getFullYear();
+  const user = ctx.user ?? defaultUser;
+  const year = new Date().getFullYear();
+
   return (
-    <footer className="App-footer">
-      <p>
-        Copyright {getCurrentYear()} - {getFooterCopy(true)}
-      </p>
+    <footer className="App-footer border-t-[3px] border-[var(--main-color)] py-2 text-center italic">
+      <p>Copyright {year} - Holberton School</p>
       {user.isLoggedIn && (
         <p>
           <a href="#">Contact us</a>
@@ -16,15 +21,3 @@ function Footer({ user }) {
     </footer>
   );
 }
-
-Footer.propTypes = {
-  user: PropTypes.shape({
-    isLoggedIn: PropTypes.bool,
-  }),
-};
-
-Footer.defaultProps = {
-  user: { isLoggedIn: false },
-};
-
-export default Footer;

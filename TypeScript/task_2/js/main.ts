@@ -1,80 +1,26 @@
-interface DirectorInterface {
-    workFromeHome(): string;
-    getCoffeeBreak(): string;
-    workDirectorTasks(): string
-}
+// Define the Teacher interface
+interface Teacher {
+	readonly firstName: string; // Can only be set during initialization
+	readonly lastName: string;  // Can only be set during initialization
+	fullTimeEmployee: boolean;
+	yearsOfExperience?: number; // Optional property
+	location: string;
+	[key: string]: any; // Allows additional attributes with any type
+  }
 
-interface TeacherInterface {
-    workFromeHome(): string;
-    getCoffeeBreak(): string;
-    workTeacherTasks(): string
-}
+  // Extend Teacher interface to create Directors interface
+  interface Directors extends Teacher {
+	numberOfReports: number; // Additional required attribute for Directors
+  }
 
-class Director implements DirectorInterface {
-    workFromeHome(): string {
-        return "Working from home"
-    }
+  // Create an object using the Directors interface
+  const director1: Directors = {
+	firstName: 'John',
+	lastName: 'Doe',
+	location: 'London',
+	fullTimeEmployee: true,
+	numberOfReports: 17,
+  };
 
-    getCoffeeBreak(): string {
-        return "Getting a coffee break"
-    }
-
-    workDirectorTasks(): string {
-        return "Getting to director task"
-    }
-}
-
-class Teacher implements TeacherInterface {
-    workFromeHome(): string {
-        return "Cannot work from home"
-    }
-
-    getCoffeeBreak(): string {
-        return "Cannot have a break"
-    }
-
-    workTeacherTasks(): string {
-        return "Getting to work"
-    }
-}
-
-function createEmployee (salary: number | string) {
-    if (typeof salary === "number" && salary < 500) {
-        return new Teacher();
-    } else {
-        return new Director();
-    }
-}
-
-function isDirector(employee: DirectorInterface | TeacherInterface): employee is Director {
-    return (employee as Director).workDirectorTasks !== undefined
-}
-
-
-function executeWork(employee: DirectorInterface | TeacherInterface) {
-    if (isDirector(employee)) {
-        console.log(employee.workDirectorTasks());
-    } else {
-        console.log(employee.workTeacherTasks());
-    }
-}
-
-type Subjects = "Math" | "History";
-
-function teachClass(todayClass: Subjects) {
-    if (todayClass === "Math") {
-        return "Teaching Math";
-    } else {
-        return "Teaching History";
-    }
-}
-
-console.log(createEmployee(200));
-console.log(createEmployee(1000));
-console.log(createEmployee("$500"));
-
-executeWork(createEmployee(200));
-executeWork(createEmployee(1000));
-
-console.log(teachClass("Math"));
-console.log(teachClass("History"));
+  // Print the director object
+  console.log(director1);

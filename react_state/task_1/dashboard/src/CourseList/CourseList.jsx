@@ -4,11 +4,12 @@ import WithLogging from "../HOC/WithLogging";
 
 function CourseList({ courses = [] }) {
   return (
-    // 85% de la page, centré, marge verticale
-    <div className="w-[85%] mx-auto my-10">
-      <div className="overflow-x-auto rounded border border-gray-200">
-        {/* La table remplit 100% du conteneur */}
-        <table id="CourseList" className="w-full table-auto border-collapse">
+    // Wrapper externe: occupe toute la largeur et centre le contenu
+    <div className="w-full flex justify-center my-8">
+      {/* Parent direct de la table: 80% EXACT (w-4/5) */}
+      <div className="w-4/5">
+        {/* La table remplit complètement son parent */}
+        <table id="CourseList" className="w-full border-collapse text-black">
           {courses.length > 0 ? (
             <>
               <thead>
@@ -20,11 +21,11 @@ function CourseList({ courses = [] }) {
                 />
               </thead>
               <tbody>
-                {courses.map((course) => (
+                {courses.map((c) => (
                   <CourseListRow
-                    key={course.id}
-                    textFirstCell={course.name}
-                    textSecondCell={course.credit}
+                    key={c.id}
+                    textFirstCell={c.name}
+                    textSecondCell={c.credit}
                   />
                 ))}
               </tbody>

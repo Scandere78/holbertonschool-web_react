@@ -1,79 +1,112 @@
-import React from 'react';
+// task_5/dashboard/src/Notifications/Notifications.jsx
+import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import './Notifications.css';
 import closeIcon from '../assets/close-button.png';
-import { getLatestNotification } from '../utils/utils';
 import NotificationItem from './NotificationItem';
 
-class Notifications extends React.Component {
+export default class Notifications extends Component {
   static propTypes = {
     notifications: PropTypes.arrayOf(
       PropTypes.shape({
-        id: PropTypes.number.isRequired,
-        type: PropTypes.string.isRequired,
+        id: PropTypes.oneOfType([PropTypes.number, PropTypes.string]).isRequired,
+        type: PropTypes.string,
         value: PropTypes.string,
-        html: PropTypes.shape({
-          __html: PropTypes.string,
-        }),
+        html: PropTypes.shape({ __html: PropTypes.string }),
       })
     ),
+    displayDrawer: PropTypes.bool,
+    handleDisplayDrawer: PropTypes.func,
+    handleHideDrawer: PropTypes.func,
   };
 
   static defaultProps = {
-    notifications: [
-      { id: 1, type: 'default', value: 'New course available' },
-      { id: 2, type: 'urgent', value: 'New resume available' },
-      { id: 3, type: 'urgent', html: { __html: getLatestNotification() } },
-    ],
+    notifications: [],
+    displayDrawer: false,
+    handleDisplayDrawer: undefined,
+    handleHideDrawer: undefined,
   };
 
   shouldComponentUpdate(nextProps) {
-    return nextProps.notifications.length !== this.props.notifications.length;
+    return (
+      nextProps.notifications.length !== this.props.notifications.length ||
+      nextProps.displayDrawer !== this.props.displayDrawer
+    );
   }
-
-  handleCloseClick = () => {
-    console.log('Close button has been clicked');
-  };
 
   markAsRead = (id) => {
     console.log(`Notification ${id} has been marked as read`);
   };
 
   render() {
-    const { notifications } = this.props;
+    const { notifications, displayDrawer } = this.props;
+
+    // Bounce uniquement si > 0 notifs ET drawer fermé
+    const shouldBounce = notifications.length > 0 && !displayDrawer;
 
     return (
-      <div className="Notifications">
-        <button
-          style={{
-            position: 'absolute',
-            top: '10px',
-            right: '10px',
-            background: 'transparent',
-            border: 'none',
-            cursor: 'pointer'
+      <div
+        className="fixed z-50 text-right"
+        style={{ position: 'fixed', top: '1rem', right: '1rem', left: 'auto' }}
+      >
+        {/* Titre (cliquable pour ouvrir le drawer) */}
+        <div
+          className={`menuItem text-right font-normal text-base text-black ${
+            shouldBounce ? 'animate-bounce' : ''
+          }`}
+          data-testid="notifications-title"
+          role="button"
+          tabIndex={0}
+          onClick={() => this.props.handleDisplayDrawer && this.props.handleDisplayDrawer()}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+              this.props.handleDisplayDrawer && this.props.handleDisplayDrawer();
+            }
           }}
-          aria-label="Close"
-          onClick={this.handleCloseClick}
         >
-          <img src={closeIcon} alt="close" />
-        </button>
-        <p>Here is the list of notifications</p>
-        <ul>
-          {notifications.map((notification) => (
-            <NotificationItem
-              key={notification.id}
-              id={notification.id}
-              type={notification.type}
-              value={notification.value}
-              html={notification.html}
-              markAsRead={this.markAsRead}
-            />
-          ))}
-        </ul>
+          Your notifications
+        </div>
+
+        {/* Drawer : bordure pointillée rouge sans arrondi */}
+        {displayDrawer && (
+          <div
+            className="relative mt-1 inline-block p-2 border border-dotted rounded-none bg-white w-[520px] text-left"
+            style={{ borderColor: 'var(--main-color)' }}
+          >
+            {notifications.length === 0 ? (
+              <p className="notifications-empty m-0">No new notification for now</p>
+            ) : (
+              <>
+                <p className="text-base mb-2 m-0">Here is the list of notifications</p>
+
+                <button
+                  aria-label="Close"
+                  className="absolute top-2 right-2"
+                  onClick={() =>
+                    this.props.handleHideDrawer
+                      ? this.props.handleHideDrawer()
+                      : console.log('Close button has been clicked')
+                  }
+                >
+                  <img src={closeIcon} alt="Close" className="w-3 h-3" />
+                </button>
+
+                <ul className="notifications-list">
+                  {notifications.map((n) => (
+                    <NotificationItem
+                      key={n.id}
+                      id={n.id}
+                      type={n.type}
+                      value={n.value}
+                      html={n.html}
+                      markAsRead={this.markAsRead}
+                    />
+                  ))}
+                </ul>
+              </>
+            )}
+          </div>
+        )}
       </div>
     );
   }
 }
-
-export default Notifications;

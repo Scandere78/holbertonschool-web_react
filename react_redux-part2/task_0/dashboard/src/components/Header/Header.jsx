@@ -1,10 +1,13 @@
-import React from 'react';
-import { useSelector, useDispatch } from 'react-redux';
-import holbertonLogo from '../../assets/holberton-logo.jpg';
-import { logout } from '../../features/auth/authSlice';
+import React from "react";
+import { useSelector, useDispatch } from "react-redux";
+import { logout } from "../../features/auth/authSlice";
+import holbertonLogo from "../../assets/holberton-logo.jpg";
 
-export default function Header() {
+function Header() {
   const dispatch = useDispatch();
+
+  // Récupération de l'état auth dans le store
+  const isLoggedIn = useSelector((state) => state.auth.isLoggedIn);
   const user = useSelector((state) => state.auth.user);
 
   const handleLogout = (e) => {
@@ -13,26 +16,29 @@ export default function Header() {
   };
 
   return (
-    <header className="App-header flex items-center p-[10px]">
-      <img
-        className="App-logo h-[200px] mr-5"
-        src={holbertonLogo}
-        alt="Holberton logo"
-      />
-      <h1 className="text-[var(--main-color)] text-4xl font-bold">
-        School Dashboard
+    <header className="App-header flex items-center p-6">
+      <img src={holbertonLogo} className="h-20 w-20" alt="Holberton logo" />
+      <h1 className="text-[var(--main-color)] text-4xl font-bold ml-4">
+        School dashboard
       </h1>
 
-      {user.isLoggedIn && (
-        <div id="logoutSection" data-testid="logoutSection" className="text-sm mt-2 ml-3">
-          <span>
-            Welcome <strong>{user.email}</strong>{' '}
-          </span>
-          <a href="#logout" onClick={handleLogout} className="text-blue-500 underline">
-            (logout)
-          </a>
-        </div>
+      {/* Section logout si isLoggedIn */}
+      {isLoggedIn && user && (
+        <section id="logoutSection" className="ml-auto text-right">
+          <p>
+            Welcome {user.email} (
+            <span
+              onClick={handleLogout}
+              style={{ cursor: "pointer", color: "blue" }}
+            >
+              logout
+            </span>
+            )
+          </p>
+        </section>
       )}
     </header>
   );
 }
+
+export default Header;

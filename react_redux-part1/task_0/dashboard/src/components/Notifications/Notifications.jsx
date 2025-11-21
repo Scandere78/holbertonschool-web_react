@@ -1,72 +1,74 @@
-import React from 'react';
-import PropTypes from 'prop-types';
-import closeIcon from '../../assets/close-button.png';
-import NotificationItem from '../NotificationItem/NotificationItem';
+import React, { memo } from "react";
+import PropTypes from "prop-types";
+import closeIcon from "../../assets/close-icon.png";
+import NotificationItem from "../NotificationItem/NotificationItem";
 
-export default function Notifications({
+function Notifications({
   notifications = [],
-  displayDrawer = false,
+  displayDrawer = true,
   handleDisplayDrawer,
   handleHideDrawer,
   markNotificationAsRead,
 }) {
-  const shouldBounce = notifications.length > 0 && !displayDrawer;
+  // --- Styles ---
+  const borderStyle = {
+    borderColor: "var(--main-color)",
+  };
+
+  const titleClassName = `text-right pr-8 pt-2 ${
+    notifications.length > 0 && !displayDrawer ? "animate-bounce" : ""
+  }`;
 
   return (
-    <div
-      className="fixed z-50 text-right"
-      style={{ position: 'fixed', top: '1rem', right: '1rem', left: 'auto' }}
-    >
+    <>
       <div
-        className={`menuItem text-right font-normal text-base text-black ${shouldBounce ? 'animate-bounce' : ''}`}
-        data-testid="notifications-title"
-        role="button"
-        tabIndex={0}
+        className={`${titleClassName} cursor-pointer`}
         onClick={handleDisplayDrawer}
-        onKeyDown={(e) => {
-          if (e.key === 'Enter' || e.key === ' ') handleDisplayDrawer();
-        }}
+        data-testid="menuItem"
       >
         Your notifications
       </div>
 
       {displayDrawer && (
         <div
-          className="relative mt-1 inline-block p-2 border border-dotted rounded-none bg-white w-[520px] text-left"
-          style={{ borderColor: 'var(--main-color)' }}
+          className="border-2 border-dashed bg-white p-6 relative float-right mr-8 mt-2 max-w-4xl"
+          style={borderStyle}
+          data-testid="Notifications"
         >
-          {notifications.length === 0 ? (
-            <p className="notifications-empty m-0">No new notification for now</p>
-          ) : (
+          <button
+            onClick={() => {
+              console.log("Close button has been clicked");
+              handleHideDrawer();
+            }}
+            aria-label="Close"
+            className="absolute cursor-pointer right-3 top-3 bg-transparent border-none p-0"
+          >
+            <img src={closeIcon} alt="close icon" className="w-5 h-5" />
+          </button>
+
+          {notifications.length > 0 ? (
             <>
-              <p className="text-base mb-2 m-0">Here is the list of notifications</p>
-
-              <button
-                aria-label="Close"
-                className="absolute top-2 right-2"
-                onClick={handleHideDrawer}
-              >
-                <img src={closeIcon} alt="Close" className="w-3 h-3" />
-              </button>
-
-              <ul className="notifications-list">
-                {notifications.map((n) => (
+              <p className="font-bold mb-3">
+                Here is the list of notifications
+              </p>
+              <ul className="list-disc pl-6 space-y-1">
+                {notifications.map((notification) => (
                   <NotificationItem
-                    key={n.id}
-                    id={n.id}
-                    type={n.type}
-                    value={n.value}
-                    html={n.html}
-                    markAsRead={() => markNotificationAsRead(n.id)}
-                    markNotificationAsRead={markNotificationAsRead}
+                    key={notification.id}
+                    type={notification.type}
+                    value={notification.value}
+                    html={notification.html}
+                    markAsRead={() => markNotificationAsRead(notification.id)} // ✅ utilise bien la prop
                   />
                 ))}
               </ul>
             </>
+          ) : (
+            <p className="text-center">No new notification for now</p>
           )}
         </div>
       )}
-    </div>
+    </>
   );
 }
 
@@ -76,13 +78,20 @@ Notifications.propTypes = {
       id: PropTypes.number.isRequired,
       type: PropTypes.string.isRequired,
       value: PropTypes.string,
-      html: PropTypes.shape({
-        __html: PropTypes.string,
-      }),
+      html: PropTypes.shape({ __html: PropTypes.string }),
     })
-  ),
-  displayDrawer: PropTypes.bool,
-  handleDisplayDrawer: PropTypes.func,
-  handleHideDrawer: PropTypes.func,
-  markNotificationAsRead: PropTypes.func,
+  ).isRequired,
+  displayDrawer: PropTypes.bool.isRequired,
+  handleDisplayDrawer: PropTypes.func.isRequired,
+  handleHideDrawer: PropTypes.func.isRequired,
+  markNotificationAsRead: PropTypes.func.isRequired,
 };
+
+const areEqual = (prevProps, nextProps) => {
+  return (
+    prevProps.notifications.length === nextProps.notifications.length &&
+    prevProps.displayDrawer === nextProps.displayDrawer
+  );
+};
+
+export default memo(Notifications, areEqual);

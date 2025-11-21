@@ -1,22 +1,18 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-class BodySection extends React.Component {
-  static propTypes = {
-    title: PropTypes.string.isRequired,
-    children: PropTypes.node,
-  };
+const BodySection = ({ title, children }) => {
+  return (
+    <div className="bodySection">
+      <h2 className="text-xl font-semibold mb-0">{title}</h2>
+      {children}
+    </div>
+  );
+};
 
-  render() {
-    const { title, children } = this.props;
-
-    return (
-      <div className="bodySection p-4">
-        <h2 className="text-2xl font-bold mb-4">{title}</h2>
-        {children}
-      </div>
-    );
-  }
-}
+BodySection.propTypes = {
+  title: PropTypes.string.isRequired,
+  children: PropTypes.node,
+};
 
 export default BodySection;

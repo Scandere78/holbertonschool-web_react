@@ -1,9 +1,10 @@
-import path from "path";
+import path from 'path';
+
 
 export default {
-  process(_, filename) {
-    return {
-      code: `export default ${JSON.stringify(path.basename(filename))};`,
-    };
-  },
+    process(sourceText, sourcePath, options) {
+        return {
+            code: `module.exports = ${JSON.stringify(path.basename(sourcePath))};`,
+        };
+    },
 };

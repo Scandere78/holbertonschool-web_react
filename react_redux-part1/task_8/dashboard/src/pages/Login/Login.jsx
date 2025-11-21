@@ -1,36 +1,21 @@
-import React from 'react';
-import { useDispatch } from 'react-redux';
-import { login } from '../../features/auth/authSlice';
-import { useLogin } from '../../hooks/useLogin';
-import { StyleSheet, css } from 'aphrodite';
+import React from "react";
+import { useDispatch } from "react-redux";
+import WithLogging from "../../components/HOC/WithLogging";
+import useLogin from "../../hooks/useLogin";
+import { login } from "../../features/auth/authSlice";
 
-const styles = StyleSheet.create({
-  login: {
-    padding: '10px',
-  },
-  form: {
-    display: 'inline-flex',
-    alignItems: 'center',
-    gap: '10px',
-    flexWrap: 'wrap',
-  },
-  input: {
-    border: '1px solid #ccc',
-    padding: '5px',
-    borderRadius: '3px',
-  },
-  button: {
-    padding: '5px 15px',
-    cursor: 'pointer',
-    ':disabled': {
-      opacity: 0.5,
-      cursor: 'not-allowed',
-    },
-  },
-});
-
-export default function Login() {
+function Login() {
   const dispatch = useDispatch();
+
+  // Callback utilisé par le hook useLogin quand le formulaire est soumis avec succès
+  const handleLogin = (email, password) => {
+    dispatch(
+      login({
+        email,
+        password,
+      })
+    );
+  };
 
   const {
     email,
@@ -39,41 +24,53 @@ export default function Login() {
     handleChangeEmail,
     handleChangePassword,
     handleSubmit,
-  } = useLogin(({ email, password }) => {
-    dispatch(login({ email, password }));
-  });
+  } = useLogin(handleLogin);
 
   return (
-    <div className={css(styles.login)}>
-      <p>Login to access the full dashboard</p>
-      <form className={css(styles.form)} onSubmit={handleSubmit}>
-        <label htmlFor="email">Email</label>
-        <input
-          id="email"
-          name="email"
-          type="email"
-          value={email}
-          onChange={handleChangeEmail}
-          className={css(styles.input)}
-        />
+    <div className="App-login flex-1 text-left m-8 border-t-4 border-[var(--main-color)] pt-6">
+      <p className="text-lg font-semibold mb-2">
+        Login to access the full dashboard
+      </p>
 
-        <label htmlFor="password">Password</label>
-        <input
-          id="password"
-          name="password"
-          type="password"
-          value={password}
-          onChange={handleChangePassword}
-          className={css(styles.input)}
-        />
+      <form
+        className="flex flex-wrap items-center gap-4"
+        onSubmit={handleSubmit}
+      >
+        <label htmlFor="email" className="flex items-center gap-2">
+          Email
+          <input
+            type="email"
+            id="email"
+            name="email"
+            value={email}
+            onChange={handleChangeEmail}
+            className="border border-gray-300 rounded px-2 py-1 focus:outline-none focus:ring-2 focus:ring-[var(--main-color)]"
+          />
+        </label>
+
+        <label htmlFor="password" className="flex items-center gap-2">
+          Password
+          <input
+            type="password"
+            id="password"
+            name="password"
+            value={password}
+            onChange={handleChangePassword}
+            className="border border-gray-300 rounded px-2 py-1 focus:outline-none focus:ring-2 focus:ring-[var(--main-color)]"
+          />
+        </label>
 
         <input
           type="submit"
           value="OK"
           disabled={!enableSubmit}
-          className={css(styles.button)}
+          className={`px-4 py-2 border border-gray-300 rounded bg-white hover:bg-gray-50 cursor-pointer transition ${
+            !enableSubmit ? "opacity-50 cursor-not-allowed" : ""
+          }`}
         />
       </form>
     </div>
   );
 }
+
+export default WithLogging(Login);

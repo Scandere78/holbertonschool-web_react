@@ -1,38 +1,35 @@
-import React from 'react';
-import ReactDOM from 'react-dom/client';
+// import '@fontsource/roboto/400.css';
+// import '@fontsource/roboto/500.css';
+// import '@fontsource/roboto/700.css'
 
-// Roboto (400/500/700)
+// import { StrictMode } from 'react'
+// import { createRoot } from 'react-dom/client'
+// import App from './App.jsx'
+// import './main.css';
+
+// createRoot(document.getElementById('root')).render(
+//   <StrictMode>
+//     <App />
+//   </StrictMode>,
+// )
+
+// src/main.jsx
 import '@fontsource/roboto/400.css';
 import '@fontsource/roboto/500.css';
 import '@fontsource/roboto/700.css';
 
-// ➕ Forcer des requêtes réseau vers les polices
-import roboto400Woff2 from '@fontsource/roboto/files/roboto-latin-400-normal.woff2';
-import roboto500Woff2 from '@fontsource/roboto/files/roboto-latin-500-normal.woff2';
-import roboto700Woff2 from '@fontsource/roboto/files/roboto-latin-700-normal.woff2';
-
-function ensureRobotoNetworkFetch() {
-  const faces = [
-    new FontFace('Roboto', `url(${roboto400Woff2}) format('woff2')`, { weight: '400', style: 'normal' }),
-    new FontFace('Roboto', `url(${roboto500Woff2}) format('woff2')`, { weight: '500', style: 'normal' }),
-    new FontFace('Roboto', `url(${roboto700Woff2}) format('woff2')`, { weight: '700', style: 'normal' }),
-  ];
-  faces.forEach(f => f.load().then(loaded => document.fonts.add(loaded)).catch(() => {}));
-  document.fonts.load('400 1rem Roboto');
-  document.fonts.load('500 1rem Roboto');
-  document.fonts.load('700 1rem Roboto');
-}
-ensureRobotoNetworkFetch();
-
-import './main.css';
-import App from './App.jsx';
+import { StrictMode } from 'react';
+import { createRoot } from 'react-dom/client';
 import { Provider } from 'react-redux';
-import store from './app/store';
 
-ReactDOM.createRoot(document.getElementById('root')).render(
-  <React.StrictMode>
+import App from './App.jsx';
+import store from './app/store';
+import './main.css';
+
+createRoot(document.getElementById('root')).render(
+  <StrictMode>
     <Provider store={store}>
       <App />
     </Provider>
-  </React.StrictMode>
+  </StrictMode>,
 );

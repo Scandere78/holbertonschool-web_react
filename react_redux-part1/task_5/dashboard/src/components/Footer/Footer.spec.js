@@ -1,77 +1,33 @@
-import React from 'react';
-import { render, screen } from '@testing-library/react';
-import '@testing-library/jest-dom';
-import { Provider } from 'react-redux';
-import { configureStore } from '@reduxjs/toolkit';
-import Footer from './Footer';
-import authReducer from '../../features/auth/authSlice';
+import { render, screen, fireEvent } from "@testing-library/react";
+import { expect, test, jest } from "@jest/globals";
+import Footer from "./Footer.jsx";
+import React from "react";
 
-const mockStore = (initialState = {}) => {
-  return configureStore({
-    reducer: {
-      auth: authReducer,
-    },
-    preloadedState: initialState,
-  });
-};
+test("renders copyright text", () => {
+  const user = { email: "", password: "", isLoggedIn: false };
+  render(<Footer user={user} logOut={jest.fn()} />);
+  expect(screen.getByText(/Copyright/i)).toBeInTheDocument();
+});
 
-describe('Footer component - Redux integration', () => {
-  test('renders copyright with current year', () => {
-    const store = mockStore({
-      auth: { user: { email: '', password: '' }, isLoggedIn: false },
-    });
+test('displays "Contact us" when user is logged out', () => {
+  const user = { email: "", password: "", isLoggedIn: false };
+  render(<Footer user={user} logOut={jest.fn()} />);
+  const contactLink = screen.getByText(/Contact us/i);
+  expect(contactLink).toBeInTheDocument();
+});
 
-    render(
-      <Provider store={store}>
-        <Footer />
-      </Provider>
-    );
+test('displays welcome message and logout link when user is logged in', () => {
+  const user = { email: "user@test.com", password: "password123", isLoggedIn: true };
+  const logOutSpy = jest.fn();
 
-    const year = new Date().getFullYear().toString();
-    const p = screen.getByText(/copyright/i);
-    expect(p).toBeInTheDocument();
-    expect(p).toHaveTextContent(year);
-  });
+  render(<Footer user={user} logOut={logOutSpy} />);
 
-  test('does not display "Contact us" when user is logged out', () => {
-    const store = mockStore({
-      auth: { user: { email: '', password: '' }, isLoggedIn: false },
-    });
+  const welcomeMessage = screen.getByText(/Welcome user@test.com/i);
+  const logoutLink = screen.getByText(/Logout/i);
 
-    render(
-      <Provider store={store}>
-        <Footer />
-      </Provider>
-    );
+  expect(welcomeMessage).toBeInTheDocument();
+  expect(logoutLink).toBeInTheDocument();
 
-    expect(screen.queryByText(/contact us/i)).not.toBeInTheDocument();
-  });
-
-  test('displays "Contact us" when user is logged in', () => {
-    const store = mockStore({
-      auth: { user: { email: 'test@example.com', password: 'password' }, isLoggedIn: true },
-    });
-
-    render(
-      <Provider store={store}>
-        <Footer />
-      </Provider>
-    );
-
-    expect(screen.getByText(/contact us/i)).toBeInTheDocument();
-  });
-
-  test('renders footer element', () => {
-    const store = mockStore({
-      auth: { user: { email: '', password: '' }, isLoggedIn: false },
-    });
-
-    render(
-      <Provider store={store}>
-        <Footer />
-      </Provider>
-    );
-
-    expect(screen.getByRole('contentinfo')).toBeInTheDocument();
-  });
+  fireEvent.click(logoutLink);
+  expect(logOutSpy).toHaveBeenCalled();
 });

@@ -1,18 +1,26 @@
-import React from "react";
+// Login.jsx
+import React from 'react';
+import WithLogging from '../HOC/WithLogging';
 
 function Login() {
   return (
-    <div className="App-body p-8 max-[912px]:p-4" style={{ borderTop: '3px solid var(--main-color)' }}>
-      <p className="mb-4">Login to access the full dashboard</p>
-      <div className="flex flex-wrap gap-4 items-center max-[912px]:flex-col max-[912px]:items-start">
-        <label htmlFor="email" className="font-medium">Email:</label>
-        <input type="email" id="email" name="email" className="border border-gray-300 px-2 py-1 rounded max-[912px]:w-full" />
-        <label htmlFor="password" className="font-medium">Password:</label>
-        <input type="password" id="password" name="password" className="border border-gray-300 px-2 py-1 rounded max-[912px]:w-full" />
-        <button type="button" className="px-4 py-1 bg-white border border-gray-300 rounded cursor-pointer hover:bg-gray-100 max-[912px]:w-full">OK</button>
+    // ⚠️ PAS de border ici
+    <div className="App-body p-[10px]">
+      {/* ✅ La SEULE bordure-top doit être sur CE div */}
+      <div className="border-t-[3px] border-[var(--main-color)] pt-2">
+        <p className="text-sm mb-2">Login to access the full dashboard</p>
+
+        <form className="App-login inline-flex items-center gap-2 flex-wrap">
+          <label htmlFor="email" className="ml-4 mr-2">Email</label>
+          <input id="email" type="email" className="border border-gray-300 px-2 py-1 mr-2 rounded" />
+
+          <label htmlFor="password" className="ml-4 mr-2">Password</label>
+          <input id="password" type="password" className="border border-gray-300 px-2 py-1 mr-2 rounded" />
+
+          <button className="px-3 py-1 border rounded text-xs">OK</button>
+        </form>
       </div>
     </div>
   );
 }
-
-export default Login;
+export default WithLogging(Login);

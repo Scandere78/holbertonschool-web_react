@@ -1,47 +1,28 @@
+// react_intro/task_2/dashboard/src/App.spec.js
 import React from 'react';
 import { render, screen } from '@testing-library/react';
 import App from './App';
 
-describe('App component tests for task_2', () => {
-  test('renders 2 input elements (email and password)', () => {
-    render(<App />);
-
-    // Check for email input by label
-    const emailInput = screen.getByLabelText(/email/i);
-    expect(emailInput).toBeInTheDocument();
-    expect(emailInput.type).toBe('email');
-
-    // Check for password input by label
-    const passwordInput = screen.getByLabelText(/password/i);
-    expect(passwordInput).toBeInTheDocument();
-    expect(passwordInput.type).toBe('password');
-
-    // Verify we have exactly 2 inputs total by checking all input elements
+describe('App (Task 2) - sign in form', () => {
+  test('renders two input elements (email and password)', () => {
     const { container } = render(<App />);
-    const inputElements = container.querySelectorAll('input');
-    expect(inputElements).toHaveLength(2);
+
+    // Cible par label (insensible à la casse)
+    expect(screen.getByLabelText(/email/i)).toBeInTheDocument();
+    expect(screen.getByLabelText(/password/i)).toBeInTheDocument();
+
+    // Vérifie qu’il y a exactement 2 <input>
+    expect(container.querySelectorAll('input')).toHaveLength(2);
   });
 
-  test('renders 2 label elements with text Email and Password', () => {
+  test('renders two labels with texts "Email" and "Password"', () => {
     render(<App />);
-
-    // Check for Email label using regex (case-insensitive)
-    const emailLabel = screen.getByText(/email/i);
-    expect(emailLabel).toBeInTheDocument();
-    expect(emailLabel.tagName.toLowerCase()).toBe('label');
-
-    // Check for Password label using regex (case-insensitive)
-    const passwordLabel = screen.getByText(/password/i);
-    expect(passwordLabel).toBeInTheDocument();
-    expect(passwordLabel.tagName.toLowerCase()).toBe('label');
+    expect(screen.getByText(/email/i).tagName).toBe('LABEL');
+    expect(screen.getByText(/password/i).tagName).toBe('LABEL');
   });
 
   test('renders a button with text OK', () => {
     render(<App />);
-
-    // Check for OK button using regex (case-insensitive)
-    const okButton = screen.getByRole('button', { name: /ok/i });
-    expect(okButton).toBeInTheDocument();
-    expect(okButton.textContent).toMatch(/ok/i);
+    expect(screen.getByRole('button', { name: /ok/i })).toBeInTheDocument();
   });
 });

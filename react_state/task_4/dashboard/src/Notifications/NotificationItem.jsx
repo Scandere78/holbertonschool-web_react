@@ -1,47 +1,49 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-class NotificationItem extends React.PureComponent {
-  static propTypes = {
-    type: PropTypes.string.isRequired,
-    value: PropTypes.string,
-    html: PropTypes.shape({
-      __html: PropTypes.string,
-    }),
-    markAsRead: PropTypes.func,
-    id: PropTypes.number,
-  };
+export default function NotificationItem({
+  id,
+  type = 'default',
+  value,
+  html,
+  // ✅ accepte les deux noms de handler
+  // markAsRead,
+  markNotificationAsRead,
+}) {
+  const color =
+    type === 'urgent'
+      ? 'var(--urgent-notification-item)'
+      : 'var(--default-notification-item)';
 
-  static defaultProps = {
-    type: 'default',
-    markAsRead: () => {},
-    id: 0,
-  };
-
-  handleClick = () => {
-    const { markAsRead, id } = this.props;
-    markAsRead(id);
-  };
-
-  render() {
-    const { type, value, html } = this.props;
-
-    if (html) {
-      return (
-        <li
-          data-priority={type}
-          dangerouslySetInnerHTML={html}
-          onClick={this.handleClick}
-        />
-      );
+  const onClick = () => {
+    if (typeof markNotificationAsRead === 'function') {
+      markNotificationAsRead(id);
+    } else if (typeof markAsRead === 'function') {
+      markAsRead(id);
+    } else {
+      console.log(`Notification ${id} has been marked as read`);
     }
+  };
 
-    return (
-      <li data-priority={type} onClick={this.handleClick}>
-        {value}
-      </li>
-    );
-  }
+  return html ? (
+    <li
+      data-notification-type={type}
+      style={{ color }}
+      onClick={onClick}
+      dangerouslySetInnerHTML={html}
+    />
+  ) : (
+    <li data-notification-type={type} style={{ color }} onClick={onClick}>
+      {value}
+    </li>
+  );
 }
 
-export default NotificationItem;
+NotificationItem.propTypes = {
+  id: PropTypes.oneOfType([PropTypes.number, PropTypes.string]).isRequired,
+  type: PropTypes.string,
+  value: PropTypes.string,
+  html: PropTypes.shape({ __html: PropTypes.string }),
+  markAsRead: PropTypes.func,
+  markNotificationAsRead: PropTypes.func,
+};

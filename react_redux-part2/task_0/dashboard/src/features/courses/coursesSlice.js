@@ -1,52 +1,81 @@
-import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
+// import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
+// import { logout } from '../auth/authSlice';
 
-// Async thunk pour charger les cours
-export const fetchCourses = createAsyncThunk(
-  'courses/fetchCourses',
-  async () => {
-    // Simuler un appel API
-    return new Promise((resolve) => {
-      setTimeout(() => {
-        resolve([
-          { id: 1, name: 'ES6', credit: 60 },
-          { id: 2, name: 'Webpack', credit: 20 },
-          { id: 3, name: 'React', credit: 40 },
-        ]);
-      }, 500);
-    });
-  }
-);
+// // const API_BASE_URL = 'http://localhost:5173';
+
+// // const ENDPOINTS = {
+// //   courses: `${API_BASE_URL}/courses.json`,
+// // };
+
+// const initialState = {
+//   courses: [],
+// };
+
+// export const fetchCourses = createAsyncThunk(
+//   'courses/fetchCourses',
+//   async () => {
+//     // const response = await fetch(ENDPOINTS.courses);
+//     const response = await fetch("/courses.json");
+//     const data = await response.json();
+//     return data;
+//   }
+// );
+
+// const coursesSlice = createSlice({
+//   name: 'courses',
+//   initialState,
+//   reducers: {},
+//   extraReducers: (builder) => {
+//     builder
+//       .addCase(fetchCourses.fulfilled, (state, action) => {
+//         state.courses = action.payload;
+//       })
+//       .addCase(logout, (state) => {
+//         state.courses = [];
+//       });
+//   },
+// });
+
+// export default coursesSlice.reducer;
+
+// src/features/courses/coursesSlice.js
+import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
+import axios from 'axios';
+import { logout } from '../auth/authSlice';
+
+const API_BASE_URL = 'http://localhost:5173';
+
+const ENDPOINTS = {
+  courses: `${API_BASE_URL}/courses.json`,
+};
 
 const initialState = {
   courses: [],
-  loading: false,
-  error: null,
 };
+
+export const fetchCourses = createAsyncThunk(
+  'courses/fetchCourses',
+  async () => {
+    const response = await axios.get(ENDPOINTS.courses);
+    return response.data;
+  }
+);
 
 const coursesSlice = createSlice({
   name: 'courses',
   initialState,
-  reducers: {
-    setCourses: (state, action) => {
-      state.courses = action.payload;
-    },
-  },
+  reducers: {},
   extraReducers: (builder) => {
     builder
-      .addCase(fetchCourses.pending, (state) => {
-        state.loading = true;
-        state.error = null;
-      })
       .addCase(fetchCourses.fulfilled, (state, action) => {
-        state.loading = false;
-        state.courses = action.payload;
+        state.courses = action.payload || [];
       })
-      .addCase(fetchCourses.rejected, (state, action) => {
-        state.loading = false;
-        state.error = action.error.message;
+      // Quand on se déconnecte, on vide la liste des cours
+      .addCase(logout, (state) => {
+        state.courses = [];
       });
   },
 });
 
-export const { setCourses } = coursesSlice.actions;
 export default coursesSlice.reducer;
+

@@ -4,7 +4,5 @@ import tailwindcss from '@tailwindcss/vite'
 
 export default defineConfig({
   plugins: [react(), tailwindcss()],
-  build: {
-    assetsInlineLimit: 0,
-  },
+  base: '/holbertonschool-web_react/',
 })

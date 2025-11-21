@@ -1,56 +1,113 @@
-import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import { getLatestNotification } from '../../utils/utils';
+// // task_1/dashboard/src/features/notifications/notificationsSlice.js
 
-// Async thunk pour charger les notifications
-export const fetchNotifications = createAsyncThunk(
-  'notifications/fetchNotifications',
-  async () => {
-    // Simuler un appel API
-    return new Promise((resolve) => {
-      setTimeout(() => {
-        resolve([
-          { id: 1, type: 'default', value: 'New course available' },
-          { id: 2, type: 'urgent', value: 'New resume available' },
-          { id: 3, type: 'urgent', html: { __html: getLatestNotification() } },
-        ]);
-      }, 500);
-    });
-  }
-);
+// import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
+// import { getLatestNotification } from '../../utils/utils';
+
+// const API_BASE_URL = 'http://localhost:5173';
+
+// const ENDPOINTS = {
+//   notifications: `${API_BASE_URL}/notifications.json`,
+// };
+
+// const initialState = {
+//   notifications: [],
+//   displayDrawer: true,
+// };
+
+// export const fetchNotifications = createAsyncThunk(
+//   'notifications/fetchNotifications',
+//   async () => {
+//     const response = await fetch(ENDPOINTS.notifications);
+//     const data = await response.json();
+
+//     const updatedNotifications = data.map((n) =>
+//       n.id === 3 ? { ...n, html: { __html: getLatestNotification() } } : n
+//     );
+
+//     return updatedNotifications;
+//   }
+// );
+
+// const notificationsSlice = createSlice({
+//   name: 'notifications',
+//   initialState,
+//   reducers: {
+//     markNotificationAsRead: (state, action) => {
+//       console.log(`Notification ${action.payload} has been marked as read`);
+//       state.notifications = state.notifications.filter(
+//         (notification) => notification.id !== action.payload
+//       );
+//     },
+//     showDrawer: (state) => {
+//       state.displayDrawer = true;
+//     },
+//     hideDrawer: (state) => {
+//       state.displayDrawer = false;
+//     },
+//   },
+//   extraReducers: (builder) => {
+//     builder.addCase(fetchNotifications.fulfilled, (state, action) => {
+//       state.notifications = action.payload;
+//     });
+//   },
+// });
+
+// export const { markNotificationAsRead, showDrawer, hideDrawer } =
+//   notificationsSlice.actions;
+
+// export default notificationsSlice.reducer;
+
+// src/features/notifications/notificationsSlice.js
+import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
+import axios from 'axios';
+
+const API_BASE_URL = 'http://localhost:5173';
+
+const ENDPOINTS = {
+  notifications: `${API_BASE_URL}/notifications.json`,
+};
 
 const initialState = {
   notifications: [],
-  loading: false,
-  error: null,
+  displayDrawer: false,
 };
+
+// Thunk pour récupérer les notifications (mocké dans les tests)
+export const fetchNotifications = createAsyncThunk(
+  'notifications/fetchNotifications',
+  async () => {
+    const response = await axios.get(ENDPOINTS.notifications);
+    return response.data;
+  }
+);
 
 const notificationsSlice = createSlice({
   name: 'notifications',
   initialState,
   reducers: {
-    markNotificationAsRead: (state, action) => {
+    showDrawer(state) {
+      state.displayDrawer = true;
+    },
+    hideDrawer(state) {
+      state.displayDrawer = false;
+    },
+    markNotificationAsRead(state, action) {
       const id = action.payload;
-      state.notifications = state.notifications.filter((notif) => notif.id !== id);
+      state.notifications = state.notifications.filter(
+        (notif) => notif.id !== id
+      );
     },
   },
   extraReducers: (builder) => {
-    builder
-      .addCase(fetchNotifications.pending, (state) => {
-        state.loading = true;
-        state.error = null;
-      })
-      .addCase(fetchNotifications.fulfilled, (state, action) => {
-        state.loading = false;
-        state.notifications = action.payload;
-      })
-      .addCase(fetchNotifications.rejected, (state, action) => {
-        state.loading = false;
-        state.error = action.error.message;
-      });
+    builder.addCase(fetchNotifications.fulfilled, (state, action) => {
+      state.notifications = action.payload || [];
+    });
   },
 });
 
 export const {
+  showDrawer,
+  hideDrawer,
   markNotificationAsRead,
 } = notificationsSlice.actions;
 

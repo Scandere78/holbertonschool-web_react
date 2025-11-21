@@ -1,58 +1,79 @@
-// Test runner for task_3 sequence 3
-const fs = require('fs');
-const path = require('path');
+// testRunner-seq3.js (ESM, sans JSX)
+import React from 'react';
+import ReactDOMServer from 'react-dom/server';
+import Notifications from './src/Notifications.js'; // ⚠️ importe la version Node-safe (.js), pas le .jsx
 
-try {
-  // Check if the required files exist
-  const requiredFiles = [
-    'src/utils.js',
-    'src/Notifications.jsx',
-    'src/utils.spec.js',
-    'src/Notifications.spec.js'
-  ];
+// Capture des logs pour tester l'effet du clic
+const originalLog = console.log;
+let logMessages = [];
+console.log = (msg) => logMessages.push(msg);
 
-  let allFilesExist = true;
-  for (const file of requiredFiles) {
-    if (!fs.existsSync(path.join(__dirname, file))) {
-      allFilesExist = false;
-      break;
-    }
+function findButtonOnClick(node) {
+  // Cherche récursivement dans l'arbre React un <button> avec une prop onClick
+  if (!node || typeof node !== 'object') return null;
+
+  const { type, props } = node;
+  if (type === 'button' && props && typeof props.onClick === 'function') {
+    return props.onClick;
   }
 
-  if (!allFilesExist) {
-    console.log('NOK');
-    return;
+  if (!props) return null;
+
+  // Normaliser children en tableau
+  const children = Array.isArray(props.children)
+    ? props.children
+    : props.children != null
+    ? [props.children]
+    : [];
+
+  for (const child of children) {
+    const found = findButtonOnClick(child);
+    if (found) return found;
   }
-
-  // Check if utils functions exist
-  const utilsPath = path.join(__dirname, 'src/utils.js');
-  const utilsContent = fs.readFileSync(utilsPath, 'utf8');
-
-  const hasGetCurrentYear = utilsContent.includes('getCurrentYear');
-  const hasGetFooterCopy = utilsContent.includes('getFooterCopy');
-  const hasGetLatestNotification = utilsContent.includes('getLatestNotification');
-
-  if (!hasGetCurrentYear || !hasGetFooterCopy || !hasGetLatestNotification) {
-    console.log('NOK');
-    return;
-  }
-
-  // Check if Notifications component has required elements
-  const notificationsPath = path.join(__dirname, 'src/Notifications.jsx');
-  const notificationsContent = fs.readFileSync(notificationsPath, 'utf8');
-
-  const hasCloseButton = notificationsContent.includes('aria-label="Close"');
-  const hasListItems = notificationsContent.includes('<li');
-  const hasDangerouslySetInnerHTML = notificationsContent.includes('dangerouslySetInnerHTML');
-
-  if (!hasCloseButton || !hasListItems || !hasDangerouslySetInnerHTML) {
-    console.log('NOK');
-    return;
-  }
-
-  // All checks passed
-  console.log('OK');
-
-} catch (error) {
-  console.log('NOK');
+  return null;
 }
+
+function runTests() {
+  let ok = true;
+
+  try {
+    // 1) Rendu SSR sans JSX
+    const element = React.createElement(Notifications);
+    const html = ReactDOMServer.renderToStaticMarkup(element);
+
+    // 2) Titre présent (ignore case)
+    if (!/here is the list of notifications/i.test(html)) {
+      ok = false;
+    }
+
+    // 3) Bouton avec aria-label="Close"
+    if (!/aria-label="Close"/i.test(html)) {
+      ok = false;
+    }
+
+    // 4) Exactement 3 <li>
+    const liCount = (html.match(/<li/g) || []).length;
+    if (liCount !== 3) {
+      ok = false;
+    }
+
+    // 5) Simuler le clic: récupérer onClick sur le <button> et l'appeler
+    const onClick = findButtonOnClick(element);
+    if (typeof onClick !== 'function') {
+      ok = false;
+    } else {
+      onClick(); // devrait pousser "Close button has been clicked" dans logMessages
+      if (!logMessages.includes('Close button has been clicked')) {
+        ok = false;
+      }
+    }
+  } catch {
+    ok = false;
+  }
+
+  // Restaure console.log et affiche le verdict attendu par le checker
+  console.log = originalLog;
+  console.log(ok ? 'OK' : 'NOK');
+}
+
+runTests();

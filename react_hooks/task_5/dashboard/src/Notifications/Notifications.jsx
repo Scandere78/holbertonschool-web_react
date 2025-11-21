@@ -1,76 +1,100 @@
+// task_3/dashboard/src/Notifications/Notifications.jsx
 import React, { memo } from 'react';
 import PropTypes from 'prop-types';
-import closebtn from '../assets/close-button.png';
+import closeIcon from '../assets/close-button.png';
 import NotificationItem from './NotificationItem';
 
-const Notifications = memo(function Notifications({
-  notifications,
-  displayDrawer,
+function Notifications({
+  listNotifications = [],
+  notifications = [],
+  displayDrawer = false,
   handleDisplayDrawer,
   handleHideDrawer,
-  markNotificationAsRead,
+  markNotificationAsRead = (id) => {
+    // fallback simple côté navigateur
+    // eslint-disable-next-line no-console
+    console.log(`Notification ${id} has been marked as read`);
+  },
 }) {
-  const Title = (
-    <div
-      className="notification-title fixed top-2 right-3 z-[1000] cursor-pointer"
-      data-testid="notifications-title"
-      onClick={handleDisplayDrawer}
-    >
-      <p className="m-0 p-0 text-sm font-medium">Your notifications</p>
-    </div>
-  );
+  // ✅ accepte notifications OU listNotifications
+  const items =
+    (Array.isArray(notifications) && notifications.length
+      ? notifications
+      : listNotifications) || [];
 
-  const Drawer = displayDrawer ? (
+  const shouldBounce = items.length > 0 && !displayDrawer;
+
+  return (
     <div
-      className="notifications fixed top-10 right-3 z-[999] w-[360px] max-w-[calc(100%-24px)] rounded-none bg-white box-border p-4 pb-3 border-2 border-dashed"
-      style={{ borderColor: 'var(--main-color)' }}
+      className="fixed z-50 text-right"
+      style={{ position: 'fixed', top: '1rem', right: '1rem', left: 'auto' }}
     >
-      <div className="notification-items">
-        {notifications.length > 0 ? (
-          <>
-            <p className="m-0 mb-3">Here is the list of notifications</p>
-            <button
-              onClick={handleHideDrawer}
-              aria-label="Close"
-              className="notifications-close absolute top-2 right-2 p-1 bg-transparent border-0 cursor-pointer"
-              type="button"
-            >
-              <img src={closebtn} alt="Close" className="block w-3 h-3" />
-            </button>
-            <ul className="list-disc list-outside pl-4 m-0">
-              {notifications.map((n) => (
-                <NotificationItem
-                  key={n.id}
-                  id={n.id}
-                  type={n.type}
-                  value={n.value}
-                  html={n.html}
-                  markAsRead={markNotificationAsRead}
-                />
-              ))}
-            </ul>
-          </>
-        ) : (
-          <p className="notifications-empty m-0">No new notification for now</p>
-        )}
+      <div
+        className={`menuItem text-right font-normal text-base text-black ${shouldBounce ? 'animate-bounce' : ''}`}
+        data-testid="notifications-title"
+        role="button"
+        tabIndex={0}
+        onClick={() => handleDisplayDrawer && handleDisplayDrawer()}
+        onKeyDown={(e) => {
+          if (e.key === 'Enter' || e.key === ' ') handleDisplayDrawer && handleDisplayDrawer();
+        }}
+      >
+        Your notifications
       </div>
-    </div>
-  ) : null;
 
-  return (
-    <>
-      {Title}
-      {Drawer}
-    </>
+      {displayDrawer && (
+        <div
+          className="relative mt-1 inline-block p-2 border border-dotted rounded-none bg-white w-[520px] text-left"
+          style={{ borderColor: 'var(--main-color)' }}
+        >
+          {items.length === 0 ? (
+            <p className="notifications-empty m-0">No new notification for now</p>
+          ) : (
+            <>
+              <p className="text-base mb-2 m-0">Here is the list of notifications</p>
+
+              <button
+                aria-label="Close"
+                className="absolute top-2 right-2"
+                onClick={() =>
+                  handleHideDrawer ? handleHideDrawer() : console.log('Close button has been clicked')
+                }
+              >
+                <img src={closeIcon} alt="Close" className="w-3 h-3" />
+              </button>
+
+              <ul className="notifications-list">
+                {items.map((n) => (
+                  <NotificationItem
+                    key={n.id}
+                    id={n.id}
+                    type={n.type}
+                    value={n.value}
+                    html={n.html}
+                    /* ✅ compat legacy: le runner peut appeler markAsRead(id) */
+                    markAsRead={() => markNotificationAsRead(n.id)}
+                    /* ✅ compat moderne: passe la méthode telle quelle */
+                    markNotificationAsRead={markNotificationAsRead}
+                  />
+                ))}
+              </ul>
+            </>
+          )}
+        </div>
+      )}
+    </div>
   );
-}, (prevProps, nextProps) => {
-  return (
-    prevProps.displayDrawer === nextProps.displayDrawer &&
-    prevProps.notifications.length === nextProps.notifications.length
-  );
-});
+}
 
 Notifications.propTypes = {
+  listNotifications: PropTypes.arrayOf(
+    PropTypes.shape({
+      id: PropTypes.oneOfType([PropTypes.number, PropTypes.string]).isRequired,
+      type: PropTypes.string,
+      value: PropTypes.string,
+      html: PropTypes.shape({ __html: PropTypes.string }),
+    })
+  ),
   notifications: PropTypes.arrayOf(
     PropTypes.shape({
       id: PropTypes.oneOfType([PropTypes.number, PropTypes.string]).isRequired,
@@ -85,12 +109,37 @@ Notifications.propTypes = {
   markNotificationAsRead: PropTypes.func,
 };
 
-Notifications.defaultProps = {
-  notifications: [],
-  displayDrawer: false,
-  handleDisplayDrawer: () => {},
-  handleHideDrawer: () => {},
-  markNotificationAsRead: () => {},
+// 🔎 Fonction de comparaison pour React.memo
+// → re-render uniquement si:
+//   - displayDrawer change
+//   - la liste « effective » change de longueur
+//   - ou que l'un des items (id/type/value/html.__html) change
+const selectItems = (props) =>
+  (Array.isArray(props.notifications) && props.notifications.length
+    ? props.notifications
+    : props.listNotifications) || [];
+
+const areEqual = (prev, next) => {
+  if (prev.displayDrawer !== next.displayDrawer) return false;
+
+  const prevItems = selectItems(prev);
+  const nextItems = selectItems(next);
+
+  if (prevItems.length !== nextItems.length) return false;
+
+  for (let i = 0; i < prevItems.length; i += 1) {
+    const a = prevItems[i];
+    const b = nextItems[i];
+    if (a.id !== b.id) return false;
+    if (a.type !== b.type) return false;
+    if (a.value !== b.value) return false;
+    const aHtml = a.html?.__html ?? null;
+    const bHtml = b.html?.__html ?? null;
+    if (aHtml !== bHtml) return false;
+  }
+
+  // Pas de changement pertinent → pas de re-render
+  return true;
 };
 
-export default Notifications;
+export default memo(Notifications, areEqual);

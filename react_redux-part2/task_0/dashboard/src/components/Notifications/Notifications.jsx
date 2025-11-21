@@ -1,88 +1,212 @@
-import React, { useEffect, useRef } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
-import closeIcon from '../../assets/close-button.png';
-import NotificationItem from '../NotificationItem/NotificationItem';
+// import React, { memo, useEffect } from "react";
+// import { useSelector, useDispatch } from "react-redux";
+// import PropTypes from "prop-types";
+// import closeIcon from "../../assets/close-icon.png";
+// import NotificationItem from "../NotificationItem/NotificationItem";
+// import {
+//   markNotificationAsRead,
+//   showDrawer,
+//   hideDrawer,
+//   fetchNotifications,
+// } from "../../features/notifications/notificationsSlice";
+
+// function Notifications() {
+//   const dispatch = useDispatch();
+
+//   // 👉 On va chercher les notifications au montage du composant
+//   useEffect(() => {
+//     dispatch(fetchNotifications());
+//   }, [dispatch]);
+
+//   // 📌 Récupération de l'état depuis le slice notifications
+//   const notifications = useSelector(
+//     (state) => state.notifications.notifications
+//   );
+//   const displayDrawer = useSelector(
+//     (state) => state.notifications.displayDrawer
+//   );
+
+//   // 📌 Handlers maintenant gérés ici et dispatch vers Redux
+//   const handleDisplayDrawer = () => {
+//     dispatch(showDrawer());
+//   };
+
+//   const handleHideDrawer = () => {
+//     dispatch(hideDrawer());
+//   };
+
+//   const handleMarkAsRead = (id) => {
+//     dispatch(markNotificationAsRead(id));
+//   };
+
+//   // --- Styles ---
+//   const borderStyle = {
+//     borderColor: "var(--main-color)",
+//   };
+
+//   const titleClassName = `text-right pr-8 pt-2 ${
+//     notifications.length > 0 && !displayDrawer ? "animate-bounce" : ""
+//   }`;
+
+//   return (
+//     <>
+//       <div
+//         className={`${titleClassName} cursor-pointer`}
+//         onClick={handleDisplayDrawer}
+//         data-testid="menuItem"
+//       >
+//         Your notifications
+//       </div>
+
+//       {displayDrawer && (
+//         <div
+//           className="border-2 border-dashed bg-white p-6 relative float-right mr-8 mt-2 max-w-4xl"
+//           style={borderStyle}
+//           data-testid="Notifications"
+//         >
+//           <button
+//             onClick={() => {
+//               console.log("Close button has been clicked");
+//               handleHideDrawer();
+//             }}
+//             aria-label="Close"
+//             className="absolute cursor-pointer right-3 top-3 bg-transparent border-none p-0"
+//           >
+//             <img src={closeIcon} alt="close icon" className="w-5 h-5" />
+//           </button>
+
+//           {notifications.length > 0 ? (
+//             <>
+//               <p className="font-bold mb-3">
+//                 Here is the list of notifications
+//               </p>
+//               <ul className="list-disc pl-6 space-y-1">
+//                 {notifications.map((notification) => (
+//                   <NotificationItem
+//                     key={notification.id}
+//                     type={notification.type}
+//                     value={notification.value}
+//                     html={notification.html}
+//                     markAsRead={() => handleMarkAsRead(notification.id)}
+//                   />
+//                 ))}
+//               </ul>
+//             </>
+//           ) : (
+//             <p className="text-center">No new notification for now</p>
+//           )}
+//         </div>
+//       )}
+//     </>
+//   );
+// }
+
+// // PropTypes facultatifs, mais ça ne gêne pas
+// Notifications.propTypes = {
+//   notifications: PropTypes.arrayOf(
+//     PropTypes.shape({
+//       id: PropTypes.number,
+//       type: PropTypes.string,
+//       value: PropTypes.string,
+//       html: PropTypes.shape({ __html: PropTypes.string }),
+//     })
+//   ),
+//   displayDrawer: PropTypes.bool,
+// };
+
+// // 👉 Pour les tests "No unnecessary re-renders", on garde la même logique
+// /* eslint-disable no-unused-vars */
+// const areEqual = (prevProps, nextProps) => {
+//   return (
+//     prevProps.notifications.length === nextProps.notifications.length &&
+//     prevProps.displayDrawer === nextProps.displayDrawer
+//   );
+// };
+// /* eslint-enable no-unused-vars */
+
+// export default memo(Notifications, areEqual);
+
+// src/components/Notifications/Notifications.jsx
+import React from "react";
+import { useSelector, useDispatch } from "react-redux";
+import closeIcon from "../../assets/close-icon.png";
+import NotificationItem from "../NotificationItem/NotificationItem";
 import {
-  fetchNotifications,
-  markNotificationAsRead as markAsRead,
-} from '../../features/notifications/notificationsSlice';
-import './Notifications.css';
+  showDrawer,
+  hideDrawer,
+  markNotificationAsRead,
+} from "../../features/notifications/notificationsSlice";
 
-export default function Notifications() {
+function Notifications() {
   const dispatch = useDispatch();
-  const notifications = useSelector((state) => state.notifications.notifications);
-  const loading = useSelector((state) => state.notifications.loading);
-  const drawerRef = useRef(null);
 
-  useEffect(() => {
-    dispatch(fetchNotifications());
-  }, [dispatch]);
+  const notifications = useSelector(
+    (state) => state.notifications.notifications
+  );
+  const displayDrawer = useSelector(
+    (state) => state.notifications.displayDrawer
+  );
 
-  const handleMarkAsRead = (id) => {
-    dispatch(markAsRead(id));
+  const handleOpen = () => {
+    dispatch(showDrawer());
   };
 
-  const handleToggleDrawer = () => {
-    if (drawerRef.current) {
-      drawerRef.current.classList.toggle('visible');
-    }
+  const handleClose = () => {
+    dispatch(hideDrawer());
+  };
+
+  const handleMarkAsRead = (id) => {
+    dispatch(markNotificationAsRead(id));
   };
 
   return (
-    <div
-      className="fixed z-50 text-right"
-      style={{ position: 'fixed', top: '1rem', right: '1rem', left: 'auto' }}
-    >
+    <div className="Notifications-wrapper">
       <div
-        className="menuItem text-right font-normal text-base text-black"
-        data-testid="notifications-title"
-        role="button"
-        tabIndex={0}
-        onClick={handleToggleDrawer}
-        onKeyDown={(e) => {
-          if (e.key === 'Enter' || e.key === ' ') handleToggleDrawer();
-        }}
+        className="menuItem"
+        onClick={handleOpen}
+        data-testid="menuItem"
       >
         Your notifications
       </div>
 
-      <div
-        ref={drawerRef}
-        className="notifications-drawer relative mt-1 inline-block p-2 border border-dotted rounded-none bg-white w-[520px] text-left"
-        style={{ borderColor: 'var(--main-color)' }}
-      >
-        {loading ? (
-          <p className="m-0">Loading notifications...</p>
-        ) : notifications.length === 0 ? (
-          <p className="notifications-empty m-0">No new notification for now</p>
-        ) : (
-          <>
-            <p className="text-base mb-2 m-0">Here is the list of notifications</p>
+      {displayDrawer && (
+        <div className="Notifications" data-testid="notificationsDrawer">
+          <button
+            type="button"
+            aria-label="Close"
+            onClick={handleClose}
+            style={{
+              position: "absolute",
+              right: "1rem",
+              top: "1rem",
+              background: "transparent",
+              border: "none",
+              cursor: "pointer",
+            }}
+          >
+            <img src={closeIcon} alt="close icon" />
+          </button>
 
-            <button
-              aria-label="Close"
-              className="absolute top-2 right-2"
-              onClick={handleToggleDrawer}
-            >
-              <img src={closeIcon} alt="Close" className="w-3 h-3" />
-            </button>
-
-            <ul className="notifications-list">
-              {notifications.map((n) => (
-                <NotificationItem
-                  key={n.id}
-                  id={n.id}
-                  type={n.type}
-                  value={n.value}
-                  html={n.html}
-                  markAsRead={() => handleMarkAsRead(n.id)}
-                  markNotificationAsRead={handleMarkAsRead}
-                />
-              ))}
-            </ul>
-          </>
-        )}
-      </div>
+          <p>Here is the list of notifications</p>
+          <ul>
+            {notifications.length === 0 && (
+              <NotificationItem value="No new notification for now" />
+            )}
+            {notifications.map((notif) => (
+              <NotificationItem
+                key={notif.id}
+                id={notif.id}
+                type={notif.type}
+                value={notif.value}
+                html={notif.html}
+                markAsRead={handleMarkAsRead}
+              />
+            ))}
+          </ul>
+        </div>
+      )}
     </div>
   );
 }
+
+export default Notifications;
